@@ -60,8 +60,8 @@
     const getgames = (event, context, callback) => {
         request('https://minidraet.dgi.dk/forening/2148000/hold/152407')
             .then(({data}) => {
-                const response = extractGamesFromHTML(data);
-                callback(null, {response});
+                const body = JSON.stringify(extractGamesFromHTML(data));
+                callback(null, {body});
             })
             .catch(callback);
     };
