@@ -14,7 +14,7 @@
     >
 
       <!-- Text slides with image -->
-      <b-carousel-slide caption="First slides"
+      <b-carousel-slide caption="First slide"
                         text="Nulla vitae elit libero, a pharetra augue mollis interdum."
                         img-src="https://picsum.photos/1024/480/?image=52"
       ></b-carousel-slide>
@@ -47,7 +47,7 @@
     </b-carousel>
 
     <p class="mt-4">
-      Slidex #: {{ slide }}<br>
+      Slide #: {{ slide }}<br>
       Sliding: {{ sliding }}
     </p>
     <div id="example-1">

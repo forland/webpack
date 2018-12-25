@@ -9,5 +9,8 @@
   },
   "devDependencies": {
     "vue-cli": "^2.8.1"
+  },
+  "dependencies": {
+    "deploy-aws-s3-cloudfront": "^0.2.10"
   }
 }
