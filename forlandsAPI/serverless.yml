@@ -24,7 +24,7 @@
         handler: handler.getgames
         events:
           - http:
-              path: games
+              path: games/{id}
               method: get
               cors: true
       create:

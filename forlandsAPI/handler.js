@@ -48,20 +48,28 @@
             .catch(callback);
     };
     
-    // const getgames = (event, context, callback) => {
-    //     getHTML()
-    //         .then(result => {
-    //             const response = { body: JSON.stringify(result) };
-    //             callback(null, response);
-    //         })
-    //         .catch(callback);
-    // };
     
     const getgames = (event, context, callback) => {
-        request('https://minidraet.dgi.dk/forening/2148000/hold/152407')
+        let idx = '2148000/hold/152407'
+        if (event.pathParameters !== null && event.pathParameters !== undefined) {
+            
+                idx = event.pathParameters.id.replace('-','/hold/')
+        }
+        
+        const url = 'https://minidraet.dgi.dk/forening/' + idx
+        
+        request(url)
             .then(({data}) => {
-                const body = JSON.stringify(extractGamesFromHTML(data));
-                callback(null, {body});
+                const response = {
+                                    statusCode: 200,
+                                    headers: {
+                                                'Access-Control-Allow-Origin': '*',
+                                                'Access-Control-Allow-Credentials': true,
+                                    },
+                                    body: JSON.stringify(extractGamesFromHTML(data)),
+                                    };
+                
+                callback(null, response);
             })
             .catch(callback);
     };

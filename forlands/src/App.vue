@@ -10,8 +10,11 @@
   <b-collapse is-nav id="nav_collapse">
 
     <b-navbar-nav>
-      <b-nav-item><router-link to="/" exact>Carousel</router-link></b-nav-item>
-      <b-nav-item disabled><router-link to="Hello">Disabled</router-link></b-nav-item>
+      <b-nav-item><router-link to="/" exact>tables</router-link></b-nav-item>
+      <b-nav-item disabled><router-link to="Hello">HEllo</router-link></b-nav-item>
+      <b-nav-item disabled><router-link to="Front">Front</router-link></b-nav-item>
+      <b-nav-item disabled><router-link to="Carousel">Carousel</router-link></b-nav-item>
+      <b-nav-item><router-link to="GetIp">GetIp</router-link></b-nav-item>
     </b-navbar-nav>
 
     <!-- Right aligned nav items -->
@@ -41,7 +44,7 @@
 
   </b-collapse>
 </b-navbar>
-    <img src="./assets/FotoJet.png">
+    <!--<img src="./assets/FotoJet.png">-->
     <router-view></router-view>
   </div>
 </template>
