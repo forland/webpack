@@ -1,45 +1,58 @@
 <template>
-    <div class="hello">
-        <h1>Your IP is {{ ip }}</h1>
-        <input type="text" v-model="input.firstname" placeholder="First Name" />
-        <input type="text" v-model="input.lastname" placeholder="Last Name" />
-        <button v-on:click="sendData()">Send</button>
-        <br />
-        <br />
-        <textarea>{{ response }}</textarea>
+  <section v-if="errored">
+    <p>We're sorry, we're not able to retrieve this information at the moment, please try back later</p>
+  </section>
+  <section v-else>  
+    <div class="gamestable">
+        
+        <div v-if="loading">Loading...</div>
+        <GamesTable v-else v-bind:games="games"/>
+        <div v-else v-for="game in games" class="games">{{ game.gameNumber }}</div>
     </div>
+  </section>
 </template>
 
 <script>
 import axios from 'axios';
+import GamesTable from './GamesTable';
 
 export default {
   name: 'Tables',
+  components: { GamesTable },
   data() {
     return {
-      ip: '',
-      input: {
-        firstname: '',
-        lastname: '',
-      },
-      response: '',
+      games: null,
+      loading: true,
+      errored: false,
     };
   },
   mounted() {
-    axios({ method: 'GET', url: 'https://zbi1d4874m.execute-api.eu-west-1.amazonaws.com/dev/games/2148000-152407' }).then((result) => {
-      this.ip = result.data[0].gameNumber;
-    }, (error) => {
-      (console.error(error));
-    });
+    axios
+      .get('https://zbi1d4874m.execute-api.eu-west-1.amazonaws.com/dev/games/2148000-152407')
+      .then((result) => {
+        console.log(result);
+        this.ip = result.data[0].gameNumber;
+        // this.games = result.data;
+      })
+      .catch((error) => {
+        console.log(error);
+        this.errored = true;
+      });
+    const linksArr = ['https://zbi1d4874m.execute-api.eu-west-1.amazonaws.com/dev/games/2148000-152407', 'https://zbi1d4874m.execute-api.eu-west-1.amazonaws.com/dev/games/2148000-152407'];
+    axios
+      .all(linksArr.map(l => axios.get(l)))
+      .then((results) => {
+        const merged = results
+        .map(r => r.data)
+        .reduce((acc, item) => [...acc, ...item], []);
+        this.games = merged;
+        console.log(merged);
+      })
+      .finally(() => {
+        this.loading = false;
+      });
   },
   methods: {
-    sendData() {
-      axios({ method: 'POST', url: 'https://httpbin.org/post', data: this.input, headers: { 'content-type': 'application/json' } }).then((result) => {
-        this.response = result.data;
-      }, (error) => {
-        console.error(error);
-      });
-    },
   },
 };
 </script>
