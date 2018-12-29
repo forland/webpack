@@ -6,6 +6,10 @@ const request = require('axios');
 function extractGamesFromHTML (html) {
  
   const $ = cheerio.load(html)
+  const koen = $('#Views_Forening_Hold_Info').find($('.footable tbody')).children().eq(1).children().eq(1).text().trim();
+  const raekkePulje = $('#Views_Forening_Hold_Info').find($('.footable tbody')).children().eq(2).children().eq(1).text().trim();
+  const raekke = raekkePulje.slice(0,(raekkePulje.indexOf('\n',0)));
+  const pulje = raekkePulje.slice(raekkePulje.lastIndexOf('\n'),raekkePulje.length).trim();
   const tableRowsGames = $('#Views_Turnering_Raekke_Pulje_Program').find($('.footable tbody tr'));
 
   const games = [];
@@ -30,7 +34,7 @@ function extractGamesFromHTML (html) {
     gameDateTxt = moment(gameDate, 'DD-MM-YYYY').format('LL');;
     gameDateCalc = moment(gameDate, 'DD-MM-YYYY').fromNow();
 
-    games.push({gameNumber, gameNumberUrl, gameDate, gameTime, gameDateTxt, gameDateCalc, homeTeam, homeTeamUrl, awayTeam, awayTeamUrl, gameLocation, gameLocationUrl, gameResult,});
+    games.push({raekke, pulje, koen, gameNumber, gameNumberUrl, gameDate, gameTime, gameDateTxt, gameDateCalc, homeTeam, homeTeamUrl, awayTeam, awayTeamUrl, gameLocation, gameLocationUrl, gameResult,});
   });
 
   return games;
