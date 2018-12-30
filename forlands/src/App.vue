@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     
-<b-navbar toggleable="md" type="dark" variant="info" fixed="bottom">
+<b-navbar toggleable="md" type="dark" variant="info" fixed="top">
 
   <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 

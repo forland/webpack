@@ -6,7 +6,7 @@
     <div class="gamestable">
         
         <div v-if="loading">Loading...</div>
-        <GamesTable v-else v-bind:games="games"/>
+        <GamesTable v-else v-bind:games="gamesPlayed"/>
         <div v-else v-for="game in games" class="games">{{ game.gameNumber }}</div>
     </div>
   </section>
@@ -22,6 +22,8 @@ export default {
   data() {
     return {
       games: null,
+      gamesPlayed: null,
+      gamesNotPlayed: null,
       loading: true,
       errored: false,
     };
@@ -30,7 +32,7 @@ export default {
     axios
       .get('https://zbi1d4874m.execute-api.eu-west-1.amazonaws.com/dev/games/2148000-152407')
       .then((result) => {
-        console.log(result);
+        // console.log(result);
         this.ip = result.data[0].gameNumber;
         // this.games = result.data;
       })
@@ -53,8 +55,10 @@ export default {
         const merged = results
         .map(r => r.data)
         .reduce((acc, item) => [...acc, ...item], []);
+        // console.log(merged);
         this.games = merged;
-        console.log(merged);
+        this.gamesNotPlayed = merged.filter(NotPlayed => NotPlayed.gameResult === '');
+        this.gamesPlayed = merged.filter(played => played.gameResult !== '');
       })
       .finally(() => {
         this.loading = false;

@@ -18,9 +18,10 @@
         </b-form-group>
       </b-col>
     </b-row>
-
+    <b-form-checkbox v-model="striped">Striped</b-form-checkbox>
     <!-- Main table element -->
-    <b-table responsive
+    <b-table :striped="striped"
+             responsive
              show-empty
              stacked="md"
              :items="items"
@@ -84,6 +85,7 @@ export default {
   data() {
     return {
       items: this.games,
+      striped: false,
       fields: [
         { key: 'gameNumber', label: 'Kamp #', sortable: true, sortDirection: 'asc' },
         { key: 'raekke', label: 'Række', sortable: true, class: 'text-center' },

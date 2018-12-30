@@ -18,7 +18,8 @@ function extractGamesFromHTML (html) {
   tableRowsGames.each((i, el) => {
 
     // Extract information from each row of the table
-    let gameNumber = $(el).children().eq(0).text().trim();
+    let gameNumberX = $(el).children().eq(0).text().trim();
+    let gameNumber = gameNumberX.slice(0,(gameNumberX.indexOf('\n',0))).trim();
     let gameNumberUrl = $(el).children().eq(0).children().eq(0).attr('href');
     let gameDate = $(el).children().eq(1).children().eq(0).text().trim();
     let gameTime = ($(el).children().eq(1).text().trim()).slice(-5).trim();
