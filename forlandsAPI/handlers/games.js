@@ -31,11 +31,14 @@ function extractGamesFromHTML (html) {
     let gameLocationUrl = $(el).children().eq(3).children().eq(1).attr('href');
     let gameResult = $(el).children().eq(4).text().trim();
     moment.locale('da');
-    gameDate = moment(gameDate, 'DD-MM-YYYY');
+    dateAndTime = gameDate + " " + gameTime
+    gameDate = moment(dateAndTime, 'DD-MM-YYYY HH:mm');
     gameDateTxt = moment(gameDate, 'DD-MM-YYYY').format('LL');;
     gameDateCalc = moment(gameDate, 'DD-MM-YYYY').fromNow();
 
     games.push({raekke, pulje, koen, gameNumber, gameNumberUrl, gameDate, gameTime, gameDateTxt, gameDateCalc, homeTeam, homeTeamUrl, awayTeam, awayTeamUrl, gameLocation, gameLocationUrl, gameResult,});
+
+    
   });
 
   return games;
