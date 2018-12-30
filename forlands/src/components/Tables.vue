@@ -6,8 +6,11 @@
     <div class="gamestable">
         
         <div v-if="loading">Loading...</div>
-        <GamesTable v-else v-bind:games="gamesPlayed"/>
-        <div v-else v-for="game in games" class="games">{{ game.gameNumber }}</div>
+        <div v-else>
+          <GamesTable v-bind:games="gamesNotPlayed" title="Kommende kampe" colHideResult="d-none" modalsID="played"/>
+          <GamesTable v-bind:games="gamesPlayed" title="Resultater" sortDescending modalsID="notPlayed"/>
+          <div v-for="game in games" class="games">{{ game.gameNumber }}</div>
+        </div>
     </div>
   </section>
 </template>
@@ -55,10 +58,13 @@ export default {
         const merged = results
         .map(r => r.data)
         .reduce((acc, item) => [...acc, ...item], []);
-        // console.log(merged);
         this.games = merged;
         this.gamesNotPlayed = merged.filter(NotPlayed => NotPlayed.gameResult === '');
         this.gamesPlayed = merged.filter(played => played.gameResult !== '');
+      })
+      .catch((error) => {
+        console.log(error);
+        this.errored = true;
       })
       .finally(() => {
         this.loading = false;

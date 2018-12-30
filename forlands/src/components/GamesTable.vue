@@ -1,11 +1,12 @@
 <template>
   <b-container fluid>
     <!-- User Interface controls -->
+    <h3>{{ title }}</h3>
     <b-row>
       <b-col md="6" class="my-1">
         <b-form-group horizontal label="Filter" class="mb-0">
           <b-input-group>
-            <b-form-input v-model="filter" placeholder="Type to Search" />
+            <b-form-input v-model="filter" placeholder="Søg efter...." />
             <b-input-group-append>
               <b-btn :disabled="!filter" @click="filter = ''">Clear</b-btn>
             </b-input-group-append>
@@ -13,12 +14,11 @@
         </b-form-group>
       </b-col>
       <b-col md="6" class="my-1">
-        <b-form-group horizontal label="Per page" class="mb-0">
+        <b-form-group horizontal label="Pr. side" class="mb-0">
           <b-form-select :options="pageOptions" v-model="perPage" />
         </b-form-group>
       </b-col>
     </b-row>
-    <b-form-checkbox v-model="striped">Striped</b-form-checkbox>
     <!-- Main table element -->
     <b-table :striped="striped"
              responsive
@@ -34,13 +34,15 @@
              :sort-direction="sortDirection"
              @filtered="onFiltered"
     >
+      <template slot="gameDateTxt" slot-scope="row">
+             {{row.item.gameDateTxt}} <small>{{row.item.gameTime}}</small>
+             </template>
       <template slot="homeTeam" slot-scope="row">
              <a :href="`https://minidraet.dgi.dk/${row.item.homeTeamUrl}`">{{row.item.homeTeam}}</a>
              </template>
       <template slot="awayTeam" slot-scope="row">
              <a :href="`https://minidraet.dgi.dk/${row.item.awayTeamUrl}`">{{row.item.awayTeam}}</a>
              </template>
-      <template slot="isActive" slot-scope="row">{{row.value?'Yes :)':'No :('}}</template>
       <template slot="actions" slot-scope="row">
         <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
         <b-button size="sm" @click.stop="info(row.item, row.index, $event.target)" class="mr-1">
@@ -66,7 +68,7 @@
     </b-row>
 
     <!-- Info modal -->
-    <b-modal id="modalInfo" @hide="resetModal" :title="modalInfo.title" ok-only>
+    <b-modal v-bind:id="modalsID" @hide="resetModal" :title="modalInfo.title" ok-only>
       <pre>{{ modalInfo.content }}</pre>
     </b-modal>
 
@@ -80,28 +82,29 @@ export default {
       type: Array,
       required: true,
     },
+    title: '',
+    sortDescending: Boolean,
+    colHideResult: '',
+    modalsID: '',
   },
-  name: 'GamesTable',
   data() {
     return {
       items: this.games,
-      striped: false,
+      striped: true,
       fields: [
-        { key: 'gameNumber', label: 'Kamp #', sortable: true, sortDirection: 'asc' },
+        { key: 'gameDateTxt', label: 'Dato', sortable: false, class: 'text-center' },
         { key: 'raekke', label: 'Række', sortable: true, class: 'text-center' },
-        { key: 'gameDateTxt', label: 'Dato', sortable: true, class: 'text-center' },
-        { key: 'homeTeam', label: 'Hjemme', sortable: true, class: 'text-center' },
-        { key: 'awayTeam', label: 'Ude', sortable: true, class: 'text-center' },
-        { key: 'gameResult', label: 'Resultat', sortable: true, class: 'text-center' },
-        { key: 'isActive', label: 'is Active' },
+        { key: 'homeTeam', label: 'Hjemme', sortable: false, class: 'text-center' },
+        { key: 'awayTeam', label: 'Ude', sortable: false, class: 'text-center' },
+        { key: 'gameResult', label: 'Resultat', sortable: false, class: 'text-center', thClass: this.colHideResult, tdClass: this.colHideResult },
         { key: 'actions', label: 'Actions' },
       ],
       currentPage: 1,
-      perPage: 15,
+      perPage: 5,
       totalRows: this.games.length,
-      pageOptions: [5, 10, 15, 20],
+      pageOptions: [5, 10, 15, 20, 50, 100, 200],
       sortBy: 'gameDate',
-      sortDesc: true,
+      sortDesc: this.sortDescending,
       sortDirection: 'asc',
       filter: null,
       modalInfo: { title: '', content: '' },
@@ -119,7 +122,7 @@ export default {
     info(item, index, button) {
       this.modalInfo.title = `Row index: ${index}`;
       this.modalInfo.content = JSON.stringify(item, null, 2);
-      this.$root.$emit('bv::show::modal', 'modalInfo', button);
+      this.$root.$emit('bv::show::modal', this.modalsID, button);
     },
     resetModal() {
       this.modalInfo.title = '';
@@ -133,3 +136,18 @@ export default {
   },
 };
 </script>
+<style scoped>
+    h1, h2 {
+        font-weight: normal;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    li {
+        display: inline-block;
+        margin: 0 10px;
+    }
+</style>
