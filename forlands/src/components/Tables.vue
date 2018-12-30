@@ -38,7 +38,15 @@ export default {
         console.log(error);
         this.errored = true;
       });
-    const linksArr = ['https://zbi1d4874m.execute-api.eu-west-1.amazonaws.com/dev/games/2148000-152407', 'https://zbi1d4874m.execute-api.eu-west-1.amazonaws.com/dev/games/2148000-152407'];
+    const linksArr = [
+      'https://zbi1d4874m.execute-api.eu-west-1.amazonaws.com/dev/games/2148000-152407',
+      'https://zbi1d4874m.execute-api.eu-west-1.amazonaws.com/dev/games/2148000-165378',
+      'https://zbi1d4874m.execute-api.eu-west-1.amazonaws.com/dev/games/2148000-152092',
+      'https://zbi1d4874m.execute-api.eu-west-1.amazonaws.com/dev/games/2148000-152093',
+      'https://zbi1d4874m.execute-api.eu-west-1.amazonaws.com/dev/games/2148000-152094',
+      'https://zbi1d4874m.execute-api.eu-west-1.amazonaws.com/dev/games/2148000-152097',
+      'https://zbi1d4874m.execute-api.eu-west-1.amazonaws.com/dev/games/2148000-152096',
+    ];
     axios
       .all(linksArr.map(l => axios.get(l)))
       .then((results) => {

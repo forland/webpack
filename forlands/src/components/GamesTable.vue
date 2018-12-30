@@ -20,7 +20,8 @@
     </b-row>
 
     <!-- Main table element -->
-    <b-table show-empty
+    <b-table responsive
+             show-empty
              stacked="md"
              :items="items"
              :fields="fields"
@@ -32,7 +33,12 @@
              :sort-direction="sortDirection"
              @filtered="onFiltered"
     >
-      <template slot="name" slot-scope="row">{{row.value.gameNumber}}</template>
+      <template slot="homeTeam" slot-scope="row">
+             <a :href="`https://minidraet.dgi.dk/${row.item.homeTeamUrl}`">{{row.item.homeTeam}}</a>
+             </template>
+      <template slot="awayTeam" slot-scope="row">
+             <a :href="`https://minidraet.dgi.dk/${row.item.awayTeamUrl}`">{{row.item.awayTeam}}</a>
+             </template>
       <template slot="isActive" slot-scope="row">{{row.value?'Yes :)':'No :('}}</template>
       <template slot="actions" slot-scope="row">
         <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
@@ -79,18 +85,21 @@ export default {
     return {
       items: this.games,
       fields: [
-        { key: 'gameNumber', label: 'Kamp #', sortable: true, sortDirection: 'desc' },
+        { key: 'gameNumber', label: 'Kamp #', sortable: true, sortDirection: 'asc' },
+        { key: 'raekke', label: 'Række', sortable: true, class: 'text-center' },
         { key: 'gameDateTxt', label: 'Dato', sortable: true, class: 'text-center' },
         { key: 'homeTeam', label: 'Hjemme', sortable: true, class: 'text-center' },
+        { key: 'awayTeam', label: 'Ude', sortable: true, class: 'text-center' },
+        { key: 'gameResult', label: 'Resultat', sortable: true, class: 'text-center' },
         { key: 'isActive', label: 'is Active' },
         { key: 'actions', label: 'Actions' },
       ],
       currentPage: 1,
-      perPage: 5,
+      perPage: 15,
       totalRows: this.games.length,
       pageOptions: [5, 10, 15, 20],
-      sortBy: null,
-      sortDesc: false,
+      sortBy: 'gameDate',
+      sortDesc: true,
       sortDirection: 'asc',
       filter: null,
       modalInfo: { title: '', content: '' },
