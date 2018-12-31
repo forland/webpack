@@ -9,7 +9,7 @@
         <div v-else>
           <GamesTable v-bind:games="gamesNotPlayed" title="Kommende kampe" colHideResult="d-none" modalsID="played"/>
           <GamesTable v-bind:games="gamesPlayed" title="Resultater" sortDescending modalsID="notPlayed"/>
-          <div v-for="game in games" class="games">{{ game.gameNumber }}</div>
+          <!--<div v-for="game in games" class="games">{{ game.gameNumber }}</div>-->
         </div>
     </div>
   </section>

@@ -1,6 +1,7 @@
 <template>
     <div class="hello">
-        <h1>Your IP is {{ ip }}</h1>
+        <h1>{{ title }}</h1>
+        <h3>Your IP is {{ ip }}</h3>
         <input type="text" v-model="input.firstname" placeholder="First Name" />
         <input type="text" v-model="input.lastname" placeholder="Last Name" />
         <button v-on:click="sendData()">Send</button>
@@ -15,6 +16,9 @@ import axios from 'axios';
 
 export default {
   name: 'Tables',
+  props: {
+    title: '',
+  },
   data() {
     return {
       ip: '',
@@ -64,7 +68,7 @@ export default {
     }
 
     textarea {
-        width: 600px;
+        width: 400px;
         height: 200px;
     }
 </style>

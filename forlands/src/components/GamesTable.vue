@@ -69,6 +69,7 @@
 
     <!-- Info modal -->
     <b-modal v-bind:id="modalsID" @hide="resetModal" :title="modalInfo.title" ok-only>
+      <GetIp v-bind:title="modalInfo.content"/>
       <pre>{{ modalInfo.content }}</pre>
     </b-modal>
 
@@ -76,7 +77,10 @@
 </template>
 
 <script>
+import GetIp from './GetIp';
+
 export default {
+  components: { GetIp },
   props: {
     games: {
       type: Array,
@@ -121,7 +125,8 @@ export default {
   methods: {
     info(item, index, button) {
       this.modalInfo.title = `Row index: ${index}`;
-      this.modalInfo.content = JSON.stringify(item, null, 2);
+      // this.modalInfo.content = JSON.stringify(item, null, 2);
+      this.modalInfo.content = item.gameTime;
       this.$root.$emit('bv::show::modal', this.modalsID, button);
     },
     resetModal() {

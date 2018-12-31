@@ -10,6 +10,7 @@ function extractGamesFromHTML (html) {
   const raekkePulje = $('#Views_Forening_Hold_Info').find($('.footable tbody')).children().eq(2).children().eq(1).text().trim();
   const raekke = raekkePulje.slice(0,(raekkePulje.indexOf('\n',0)));
   const pulje = raekkePulje.slice(raekkePulje.lastIndexOf('\n'),raekkePulje.length).trim();
+  const puljeUrl = $('#Views_Forening_Hold_Info').find($('.footable tbody')).children().eq(2).children().eq(1).children().eq(1).attr('href');
   const tableRowsGames = $('#Views_Turnering_Raekke_Pulje_Program').find($('.footable tbody tr'));
 
   const games = [];
@@ -36,7 +37,7 @@ function extractGamesFromHTML (html) {
     gameDateTxt = moment(gameDate, 'DD-MM-YYYY').format('LL');;
     gameDateCalc = moment(gameDate, 'DD-MM-YYYY').fromNow();
 
-    games.push({raekke, pulje, koen, gameNumber, gameNumberUrl, gameDate, gameTime, gameDateTxt, gameDateCalc, homeTeam, homeTeamUrl, awayTeam, awayTeamUrl, gameLocation, gameLocationUrl, gameResult,});
+    games.push({raekke, pulje, puljeUrl, koen, gameNumber, gameNumberUrl, gameDate, gameTime, gameDateTxt, gameDateCalc, homeTeam, homeTeamUrl, awayTeam, awayTeamUrl, gameLocation, gameLocationUrl, gameResult,});
 
     
   });
