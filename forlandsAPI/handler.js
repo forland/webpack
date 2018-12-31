@@ -50,7 +50,7 @@
     
     
     const getgames = (event, context, callback) => {
-        let idx = '2148000/hold/152096'
+        let idx = '2148000/hold/152407'
         if (event.pathParameters !== null && event.pathParameters !== undefined) {
             
                 idx = event.pathParameters.id.replace('-','/hold/')
