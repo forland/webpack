@@ -27,6 +27,20 @@
               path: games/{id}
               method: get
               cors: true
+      getstats:
+        handler: handler.getstats
+        events:
+          - http:
+              path: stats/{id}
+              method: get
+              cors: true      
+      getgameinfo:
+        handler: handler.getgameinfo
+        events:
+          - http:
+              path: gameinfo/{id}
+              method: get
+              cors: true    
       create:
         handler: handler.create
         events:
