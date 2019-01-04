@@ -1,41 +1,39 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <h2>Essential Links</h2>
-    <ul>
-      <li><a href="https://vestergaard-forland.dk" target="_blank">vestergaard-forland.dk</a></li>
-    </ul>
-  </div>
+  <b-table  show-empty 
+            responsive 
+            :items="items" 
+            :fields="fields">
+  <template slot="W-U-T" slot-scope="row">{{row.item.gamesWon}}/{{row.item.gamesDraw}}/{{row.item.gamesLost}}</template>
+  </b-table>
 </template>
 
 <script>
 export default {
-  name: 'standings',
+  props: {
+    statsData: {
+      type: Array,
+      required: true,
+    },
+  },
   data() {
     return {
-      msg: 'Welcome to forlands.dk',
+      items: this.statsData,
+      fields: [
+        { key: 'teamPosition', label: '' },
+        { key: 'team', label: '' },
+        { key: 'playedGames', label: 'Kampe' },
+        { key: 'W-U-T', label: 'W/T/U' },
+        { key: 'gamesScore', label: 'Score' },
+        { key: 'gamesPoint', label: 'P' },
+      ],
     };
+  },
+  methods: {
   },
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
+<!-- Add "scoped " attribute to limit CSS to this component only -->
 <style scoped>
-h1, h2 {
-  font-weight: normal;
-}
 
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
-a {
-  color: #42b983;
-}
 </style>

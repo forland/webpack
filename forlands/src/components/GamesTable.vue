@@ -34,6 +34,12 @@
              :sort-direction="sortDirection"
              @filtered="onFiltered"
     >
+      <template slot="detaljer" slot-scope="row">
+        <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
+        <b-form-checkbox @click.native.stop @change="row.toggleDetails" v-model="row.detailsShowing">
+          ...
+        </b-form-checkbox>
+      </template>
       <template slot="gameDateTxt" slot-scope="row">
              {{row.item.gameDateTxt}} <small>{{row.item.gameTime}}</small>
              </template>
@@ -43,13 +49,10 @@
       <template slot="awayTeam" slot-scope="row">
              <a :href="`https://minidraet.dgi.dk/${row.item.awayTeamUrl}`">{{row.item.awayTeam}}</a>
              </template>
-      <template slot="actions" slot-scope="row">
+      <template slot="stilling" slot-scope="row">
         <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
         <b-button size="sm" @click.stop="info(row.item, row.index, $event.target)" class="mr-1">
-          Info modal
-        </b-button>
-        <b-button size="sm" @click.stop="row.toggleDetails">
-          {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
+          Stilling
         </b-button>
       </template>
       <template slot="row-details" slot-scope="row">
@@ -68,19 +71,26 @@
     </b-row>
 
     <!-- Info modal -->
-    <b-modal v-bind:id="modalsID" @hide="resetModal" :title="modalInfo.title" ok-only>
-      <GetIp v-bind:title="modalInfo.content"/>
-      <pre>{{ modalInfo.content }}</pre>
+    <b-modal v-bind:id="modalsID" @hide="resetModal" :title="modalInfo.title">
+        <section v-if="modalErrored">
+          <p>We're sorry, we're not able to retrieve this information at the moment, please try back later</p>
+        </section>
+        <section v-else>  
+          <div v-if="loadingModal">....vent - henter stillingen</div>
+          <Standings v-else v-bind:statsData="modalInfo.content"/>
+        </section>
+      <pre><a :href="`https://minidraet.dgi.dk/${modalInfo.pre}`">{{modalInfo.title}}</a></pre>
     </b-modal>
-
   </b-container>
+  
 </template>
 
 <script>
-import GetIp from './GetIp';
+import axios from 'axios';
+import Standings from './Standings';
 
 export default {
-  components: { GetIp },
+  components: { Standings },
   props: {
     games: {
       type: Array,
@@ -96,12 +106,13 @@ export default {
       items: this.games,
       striped: true,
       fields: [
+        { key: 'detaljer', label: '' },
         { key: 'gameDateTxt', label: 'Dato', sortable: false, class: 'text-center' },
         { key: 'raekke', label: 'Række', sortable: true, class: 'text-center' },
         { key: 'homeTeam', label: 'Hjemme', sortable: false, class: 'text-center' },
         { key: 'awayTeam', label: 'Ude', sortable: false, class: 'text-center' },
         { key: 'gameResult', label: 'Resultat', sortable: false, class: 'text-center', thClass: this.colHideResult, tdClass: this.colHideResult },
-        { key: 'actions', label: 'Actions' },
+        { key: 'stilling', label: '' },
       ],
       currentPage: 1,
       perPage: 5,
@@ -111,7 +122,9 @@ export default {
       sortDesc: this.sortDescending,
       sortDirection: 'asc',
       filter: null,
-      modalInfo: { title: '', content: '' },
+      modalInfo: { title: '', content: [], pre: '' },
+      loadingModal: false,
+      modalErrored: false,
     };
   },
   computed: {
@@ -124,14 +137,29 @@ export default {
   },
   methods: {
     info(item, index, button) {
-      this.modalInfo.title = `Row index: ${index}`;
-      // this.modalInfo.content = JSON.stringify(item, null, 2);
-      this.modalInfo.content = item.gameTime;
+      this.loadingModal = true;
+      this.modalInfo.title = `${item.raekke} - ${item.pulje}`;
+      this.modalInfo.pre = item.puljeUrl;
       this.$root.$emit('bv::show::modal', this.modalsID, button);
+      const puljeUrlEndpoint = item.puljeUrl.replace(/\//g, '-');
+    // AXIOS
+      axios
+      .get(`https://zbi1d4874m.execute-api.eu-west-1.amazonaws.com/dev/stats/${puljeUrlEndpoint}`)
+      .then((result) => {
+        this.modalInfo.content = result.data;
+      })
+      .catch((error) => {
+        console.log(error);
+        this.modalErrored = true;
+      })
+      .finally(() => {
+        this.loadingModal = false;
+      });
     },
     resetModal() {
       this.modalInfo.title = '';
-      this.modalInfo.content = '';
+      this.modalInfo.content = [];
+      this.modalInfo.pre = '';
     },
     onFiltered(filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
