@@ -67,7 +67,10 @@ export default {
     .get(`https://zbi1d4874m.execute-api.eu-west-1.amazonaws.com/dev/gameinfo/${infoUrlEndpoint}`)
     .then((result) => {
       this.gameNumber = result.data[0].gameNumber;
-      this.gameLocation = `${result.data[0].gameLocationHead} - ${result.data[0].gameLocationSub}`;
+      this.gameLocation = result.data[0].gameLocationHead;
+      if (result.data[0].gameLocationSub) {
+        this.gameLocation = `${result.data[0].gameLocationHead} - ${result.data[0].gameLocationSub}`;
+      }
       this.gameLocationUrl = result.data[0].gameLocationUrl;
       this.gameReferees = result.data[0].gameReferees;
       this.gameRound = result.data[0].gameRound;
