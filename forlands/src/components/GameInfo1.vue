@@ -55,6 +55,7 @@ export default {
         // Here we could override the busy state, setting isBusy to false
         this.isBusy = false;
         return (items);
+        // this.$root.$emit('bv::refresh::table', 'my-table');
       }).catch((error) => {
         console.log(error);
         // Here we could override the busy state, setting isBusy to false

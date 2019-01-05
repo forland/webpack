@@ -31,7 +31,6 @@
              :filter="filter"
              :sort-by.sync="sortBy"
              :sort-desc.sync="sortDesc"
-             :sort-direction="sortDirection"
              @filtered="onFiltered"
     >
       <template slot="detaljer" slot-scope="row">
@@ -55,12 +54,10 @@
           Stilling
         </b-button>
       </template>
-      <template slot="row-details" slot-scope="row">
-        <b-card>
-          <ul>
-            <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value}}</li>
-          </ul>
-        </b-card>
+      <template id="row.item.gameNumberUrl" slot="row-details" slot-scope="row">
+        
+        <GameInfo v-bind:gameInfoUrl="row.item.gameNumberUrl"/>
+
       </template>
     </b-table>
 
@@ -73,7 +70,7 @@
     <!-- Info modal -->
     <b-modal v-bind:id="modalsID" @hide="resetModal" :title="modalInfo.title">
         <section v-if="modalErrored">
-          <p>We're sorry, we're not able to retrieve this information at the moment, please try back later</p>
+          <p>Kunne desværre ikke hente oplysningerne lige nu - prøv venligst igen eller senere....</p>
         </section>
         <section v-else>  
           <div v-if="loadingModal">....vent - henter stillingen</div>
@@ -88,9 +85,10 @@
 <script>
 import axios from 'axios';
 import Standings from './Standings';
+import GameInfo from './GameInfo';
 
 export default {
-  components: { Standings },
+  components: { Standings, GameInfo },
   props: {
     games: {
       type: Array,
@@ -109,8 +107,8 @@ export default {
         { key: 'detaljer', label: '' },
         { key: 'gameDateTxt', label: 'Dato', sortable: false, class: 'text-center' },
         { key: 'raekke', label: 'Række', sortable: true, class: 'text-center' },
-        { key: 'homeTeam', label: 'Hjemme', sortable: false, class: 'text-center' },
-        { key: 'awayTeam', label: 'Ude', sortable: false, class: 'text-center' },
+        { key: 'homeTeam', label: 'Hjemme', sortable: true, class: 'text-center' },
+        { key: 'awayTeam', label: 'Ude', sortable: true, class: 'text-center' },
         { key: 'gameResult', label: 'Resultat', sortable: false, class: 'text-center', thClass: this.colHideResult, tdClass: this.colHideResult },
         { key: 'stilling', label: '' },
       ],
@@ -120,7 +118,6 @@ export default {
       pageOptions: [5, 10, 15, 20, 50, 100, 200],
       sortBy: 'gameDate',
       sortDesc: this.sortDescending,
-      sortDirection: 'asc',
       filter: null,
       modalInfo: { title: '', content: [], pre: '' },
       loadingModal: false,
@@ -128,12 +125,6 @@ export default {
     };
   },
   computed: {
-    sortOptions() {
-      // Create an options list from our fields
-      return this.fields
-        .filter(f => f.sortable);
-        // .map((f) => { return { text: f.label, value: f.key }; });
-    },
   },
   methods: {
     info(item, index, button) {

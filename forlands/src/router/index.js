@@ -5,16 +5,16 @@ import FrontPage from '@/components/FrontPage';
 import Carousel from '@/components/Carousel';
 import Tables from '@/components/Tables';
 import GetIp from '@/components/GetIp';
-import Standings from '@/components/Standings';
+import GameInfo from '@/components/GameInfo';
 
 Vue.use(Router);
 
 export default new Router({
   routes: [
     {
-      path: '/Standings',
-      name: 'Standings',
-      component: Standings,
+      path: '/GameInfo',
+      name: 'GameInfo',
+      component: GameInfo,
     },
     {
       path: '/',

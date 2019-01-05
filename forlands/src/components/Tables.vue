@@ -1,11 +1,11 @@
 <template>
   <section v-if="errored">
-    <p>We're sorry, we're not able to retrieve this information at the moment, please try back later</p>
+    <p>Kunne desværre ikke hente oplysningerne lige nu - prøv venligst igen eller senere....</p>
   </section>
   <section v-else>  
     <div class="gamestable">
         
-        <div v-if="loading">Loading...</div>
+        <div v-if="loading">Vent - henter data...</div>
         <div v-else>
           <GamesTable v-bind:games="gamesNotPlayed" title="Kommende kampe" colHideResult="d-none" modalsID="played"/>
           <GamesTable v-bind:games="gamesPlayed" title="Resultater" sortDescending modalsID="notPlayed"/>
