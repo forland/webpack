@@ -51,8 +51,9 @@
     };
 
     const getgameinfo = (event, context, callback) => {
-        let idx = '/turnering/32794/raekke/90464/pulje/33636/kamp/671010'
+        // let idx = '/turnering/32794/raekke/90464/pulje/33636/kamp/671010'
         // let idx = '/turnering-32794-raekke-90482-pulje-36509-kamp-711864'
+        let idx = '/turnering/32794/raekke/90490/pulje/33669/kamp/681145'
         
         if (event.pathParameters !== null && event.pathParameters !== undefined) {
             

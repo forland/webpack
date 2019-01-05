@@ -24,15 +24,19 @@ function extractGameInfoFromHTML (html) {
   let gameRound = $(gameInfoTabel[7]).children().eq(1).text().trim();
   
   let gameReferees = '';
+  let gameRapportUrl = '';
   if ($(gameInfoTabel[8]).children().eq(0).text().trim() == 'Dommer(e)') {
         gameReferees = $(gameInfoTabel[8]).children().eq(1).text().trim();
         gameRound = $(gameInfoTabel[9]).children().eq(1).text().trim();
+        
+        if ($(gameInfoTabel[11]).children().eq(1).children().eq(0).attr('href')) {
+        gameRapportUrl = $(gameInfoTabel[11]).children().eq(1).children().eq(0).attr('href');
+        }
   }
   
-  let gameRapportUrl = '';
   
-  if ($(gameInfoTabel[11]).children().eq(1).children().eq(0).attr('href')) {
-        gameRapportUrl = $(gameInfoTabel[11]).children().eq(1).children().eq(0).attr('href');
+  else if ($(gameInfoTabel[9]).children().eq(1).children().eq(0).attr('href')) {
+        gameRapportUrl = $(gameInfoTabel[9]).children().eq(1).children().eq(0).attr('href');
   }
   
   
