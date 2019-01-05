@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Hello from '@/components/Hello';
-import FrontPage from '@/components/FrontPage';
+import Play from '@/components/Play';
 import Carousel from '@/components/Carousel';
 import Tables from '@/components/Tables';
 import GetIp from '@/components/GetIp';
@@ -22,19 +21,14 @@ export default new Router({
       component: Tables,
     },
     {
-      path: '/hello',
-      name: 'Hello',
-      component: Hello,
-    },
-    {
       path: '/getip',
       name: 'GetIp',
       component: GetIp,
     },
     {
-      path: '/front',
-      name: 'Front',
-      component: FrontPage,
+      path: '/play',
+      name: 'Play',
+      component: Play,
     },
     {
       path: '/carousel',
