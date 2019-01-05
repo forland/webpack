@@ -9,8 +9,15 @@ function extractGameInfoFromHTML (html) {
   
   const gameNumber = $(gameInfoTabel[0]).children().eq(1).text().trim();
   const gameLocationFull = $(gameInfoTabel[3]).children().eq(1).text().trim();
-    const gameLocationHead = gameLocationFull.slice(0,(gameLocationFull.indexOf('\n',0)));
-    const gameLocationSub = gameLocationFull.slice(gameLocationFull.lastIndexOf('\n'),gameLocationFull.length).trim();
+  // console.log($(gameInfoTabel[3]).children().eq(1).text())  
+  
+  let gameLocationHead = gameLocationFull
+  let gameLocationSub = ''
+  if (gameLocationFull.search("  ") > 0) {
+    gameLocationHead = gameLocationFull.slice(0,(gameLocationFull.indexOf('\n',0)));
+    gameLocationSub = gameLocationFull.slice(gameLocationFull.lastIndexOf('\n'),gameLocationFull.length).trim();
+  }  
+
   const gameLocationUrl = 'https://minidraet.dgi.dk' + $(gameInfoTabel[3]).children().eq(1).children().eq(0).attr('href');
   
   

@@ -52,6 +52,8 @@
 
     const getgameinfo = (event, context, callback) => {
         let idx = '/turnering/32794/raekke/90464/pulje/33636/kamp/671010'
+        // let idx = '/turnering-32794-raekke-90482-pulje-36509-kamp-711864'
+        
         if (event.pathParameters !== null && event.pathParameters !== undefined) {
             
                 idx = event.pathParameters.id
