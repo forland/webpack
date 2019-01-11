@@ -38,16 +38,16 @@ function extractGamesFromHTML (html) {
     moment.locale('da');
     
     let dateAndTime = gameDate + " " + gameTime;
-    gameDate = moment(dateAndTime, 'DD-MM-YYYY HH:mm');
+    gameDate = moment(dateAndTime, 'DD-MM-YYYY HH:mm').toISOString();
     
-    let gameDateTxt = moment(gameDate, 'DD-MM-YYYY').format('LL');;
-    let gameDateCalc = moment(gameDate, 'DD-MM-YYYY').fromNow();
+    let gameDateTxt = moment(dateAndTime, 'DD-MM-YYYY').format('LL');;
+    let gameDateCalc = moment(dateAndTime, 'DD-MM-YYYY').fromNow();
 
     games.push({raekke, pulje, puljeUrl, koen, gameNumber, gameNumberUrl, gameDate, gameTime, gameDateTxt, gameDateCalc, homeTeam, homeTeamUrl, awayTeam, awayTeamUrl, gameLocation, gameLocationUrl, gameResult,});
 
     
   });
-
+  
   return games;
 }
 

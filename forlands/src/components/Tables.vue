@@ -51,6 +51,9 @@ export default {
       'https://zbi1d4874m.execute-api.eu-west-1.amazonaws.com/dev/games/-forening-2148000-hold-152094',
       'https://zbi1d4874m.execute-api.eu-west-1.amazonaws.com/dev/games/-forening-2148000-hold-152097',
       'https://zbi1d4874m.execute-api.eu-west-1.amazonaws.com/dev/games/-forening-2148000-hold-152096',
+      'https://zbi1d4874m.execute-api.eu-west-1.amazonaws.com/dev/games/-forening-1850800-Hold-153081',
+      'https://zbi1d4874m.execute-api.eu-west-1.amazonaws.com/dev/games/-forening-1850800-Hold-152069',
+      'https://zbi1d4874m.execute-api.eu-west-1.amazonaws.com/dev/games/-forening-1850800-Hold-152071',
     ];
     axios
       .all(linksArr.map(l => axios.get(l)))
