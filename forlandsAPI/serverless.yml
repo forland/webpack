@@ -62,13 +62,6 @@
               path: gameinfo/{id}
               method: get
               cors: true    
-      creategames:
-        handler: handler.creategames
-        events:
-          - http:
-              path: creategames
-              method: post
-              cors: true
       create:
         handler: handler.create
         events:

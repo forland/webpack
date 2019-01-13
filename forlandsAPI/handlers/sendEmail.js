@@ -74,10 +74,10 @@ function sendEmail (emailBodyData) {
     // Handle promise's fulfilled/rejected states
     return sendPromise.then(
       function(data) {
-        console.log(data.MessageId);
+        console.log("Emails send with MessageID: ", data.MessageId);
       }).catch(
         function(err) {
-        console.error(err, err.stack);
+        console.error("Error sending email: ", err, err.stack);
       });
       
 

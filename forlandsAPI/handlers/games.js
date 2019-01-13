@@ -41,13 +41,12 @@ function extractGamesFromHTML (html) {
     gameDate = moment(dateAndTime, 'DD-MM-YYYY HH:mm').toISOString();
     
     let gameDateTxt = moment(dateAndTime, 'DD-MM-YYYY').format('LL');;
-    let gameDateCalc = moment(dateAndTime, 'DD-MM-YYYY').fromNow();
 
-    games.push({raekke, pulje, puljeUrl, koen, gameNumber, gameNumberUrl, gameDate, gameTime, gameDateTxt, gameDateCalc, homeTeam, homeTeamUrl, awayTeam, awayTeamUrl, gameLocation, gameLocationUrl, gameResult,});
+    games.push({raekke, pulje, puljeUrl, koen, gameNumber, gameNumberUrl, gameDate, gameTime, gameDateTxt, homeTeam, homeTeamUrl, awayTeam, awayTeamUrl, gameLocation, gameLocationUrl, gameResult,});
 
     
   });
-  
+  console.log ("Array with new games created")
   return games;
 }
 
