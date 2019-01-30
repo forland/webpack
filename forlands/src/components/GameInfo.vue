@@ -17,7 +17,10 @@
           </b-list-group>
         </b-col>
         <b-col cols="12" md="auto">
-          <div v-if="loadingInfo">Henter data...</div>
+          <div v-if="loadingInfo">
+            <P>....henter kampinfo</P>
+            <img src="../assets/oneBallRotating100x99.gif">
+          </div>
           <div v-else>
             <b-button v-if="gameRapportUrl" size="sm" :variant="primary" :href="gameRapportUrl">Hent<br>rapport</b-button>    
           </div>

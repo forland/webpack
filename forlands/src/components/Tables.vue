@@ -5,7 +5,10 @@
   <section v-else>  
     <div class="gamestable">
         
-        <div v-if="loading">Vent - henter data...</div>
+        <div v-if="loading">
+           <img src="../assets/oneBallRotating300x299.gif">
+           <p>Vent - henter data...</p>
+        </div>
         <div v-else>
           <GamesTable v-bind:games="gamesNotPlayed" title="Kommende kampe" colHideResult="d-none" modalsID="played"/>
           <GamesTable v-bind:games="gamesPlayed" title="Resultater" sortDescending modalsID="notPlayed"/>

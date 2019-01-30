@@ -73,7 +73,10 @@
           <p>Kunne desværre ikke hente oplysningerne lige nu - prøv venligst igen eller senere....</p>
         </section>
         <section v-else>  
-          <div v-if="loadingModal">....vent - henter stillingen</div>
+          <div v-if="loadingModal">
+            <P>....vent - henter stillingen</P>
+            <img src="../assets/oneBallWater.gif">
+          </div>
           <Standings v-else v-bind:statsData="modalInfo.content"/>
         </section>
       <pre><a :href="`https://minidraet.dgi.dk/${modalInfo.pre}`">{{modalInfo.title}}</a></pre>
