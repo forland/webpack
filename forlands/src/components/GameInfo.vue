@@ -22,7 +22,8 @@
             <img src="../assets/oneBallRotating100x99.gif">
           </div>
           <div v-else>
-            <b-button v-if="gameRapportUrl" size="sm" :variant="primary" :href="gameRapportUrl">Hent<br>rapport</b-button>    
+            <b-button v-if="gameRapportUrl" size="sm" variant="primary" :href="gameRapportUrl">Hent<br>rapport</b-button>   
+            <b-button v-else size="sm" variant="primary" :href="gameUpdateUrl">Indsend<br>resultat</b-button>  
           </div>
         </b-col>
         <b-col>
@@ -60,6 +61,7 @@ export default {
       gameReferees: '',
       gameRound: '',
       gameRapportUrl: '',
+      gameUpdateUrl: '',
     };
   },
   mounted() {
@@ -78,6 +80,7 @@ export default {
       this.gameReferees = result.data[0].gameReferees;
       this.gameRound = result.data[0].gameRound;
       this.gameRapportUrl = result.data[0].gameRapportUrl;
+      this.gameUpdateUrl = `https://mobilresultater.dgi.dk/Match.aspx?Number=${result.data[0].gameNumber}`;
     })
     .catch((error) => {
       console.log(error);
