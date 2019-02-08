@@ -1,0 +1,107 @@
+    service: floorballStats
+    provider:
+      name: aws
+      stage: prod
+      region: eu-west-1
+      runtime: nodejs6.10
+      iamRoleStatements:
+        - Effect: Allow
+          Action:
+            - ses:SendEmail
+            - ses:SendRawEmil
+          Resource:
+               - "*"
+        - Effect: Allow
+          Action:
+            - dynamodb:DescribeTable
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource: "arn:aws:dynamodb:*:*:table/"
+              
+    functions:
+      getleagues:
+        handler: handler.getLeaguesFromDGI
+        events:
+          - http:
+              path: getleaguesFromDGI/{id}
+              method: get
+              cors: true  
+      getgames:
+        handler: handler.getgames
+        events:
+          - http:
+              path: games/{id}
+              method: get
+              cors: true
+      getstats:
+        handler: handler.getstats
+        events:
+          - http:
+              path: stats/{id}
+              method: get
+              cors: true      
+      getgameinfo:
+        handler: handler.getgameinfo
+        events:
+          - http:
+              path: gameinfo/{id}
+              method: get
+              cors: true    
+
+    resources:
+      Resources:
+        FloorballLeagues:
+          Type: AWS::DynamoDB::Table
+          Properties:
+            TableName: leagues
+            AttributeDefinitions:
+              - AttributeName: leagueId
+                AttributeType: S
+              - AttributeName: leagueName
+                AttributeType: S  
+            KeySchema:
+              - AttributeName: leagueId
+                KeyType: HASH
+              - AttributeName: leagueName
+                KeyType: RANGE
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+        LeagueGames:
+          Type: AWS::DynamoDB::Table
+          Properties:
+            TableName: leagueGames
+            AttributeDefinitions:
+              - AttributeName: leagueId
+                AttributeType: S
+              - AttributeName: gamesData
+                AttributeType: S  
+            KeySchema:
+              - AttributeName: leagueId
+                KeyType: HASH
+              - AttributeName: gamesData
+                KeyType: RANGE
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+        SignedUpLeagues:
+          Type: AWS::DynamoDB::Table
+          Properties:
+            TableName: sigedUpLeagues
+            AttributeDefinitions:
+              - AttributeName: emailAddress
+                AttributeType: S
+              - AttributeName: signedLeagues
+                AttributeType: S  
+            KeySchema:
+              - AttributeName: emailAddress
+                KeyType: HASH
+              - AttributeName: signedLeagues
+                KeyType: RANGE
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
