@@ -20,10 +20,17 @@
             - dynamodb:PutItem
             - dynamodb:UpdateItem
             - dynamodb:DeleteItem
-          Resource: "arn:aws:dynamodb:*:*:table/"
+          Resource: "arn:aws:dynamodb:*:*:table/*"
               
     functions:
-      getleagues:
+      getLeaguesFromDB:
+        handler: handler.getLeaguesFromDB
+        events:
+          - http:
+              path: getLeaguesFromDB/{season}
+              method: get
+              cors: true 
+      getleaguesFromDGI:
         handler: handler.getLeaguesFromDGI
         events:
           - http:

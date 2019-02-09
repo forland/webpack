@@ -4,14 +4,35 @@
     const { differenceWith, isEqual } = require('lodash');
     const request = require('axios');
 
+    // Leagues
     const { extractLeaguesFromHTML } = require('./handlers/getLeaguesFromDGI');
+    const { saveLeaguesInDB } = require('./handlers/saveLeaguesInDB');
+    const { getLeaguesList } = require('./handlers/getLeaguesListFromDB');
+    
+    // Old stuff    
     const { extractGamesFromHTML } = require('./handlers/games');
     const { extractStatsFromHTML } = require('./handlers/stats');
     const { extractGameInfoFromHTML } = require('./handlers/gameinfo');
     const { getOldPlayedGamesFromDB } = require('./handlers/getOldPlayedGamesFromDB');
-    const { saveLeaguesInDB } = require('./handlers/saveLeaguesInDB');
     const { saveNewPlayedGamesInDB } = require('./handlers/saveNewPlayedGamesInDB');
     const { sendEmail } = require('./handlers/sendEmail');
+
+
+    const getLeaguesFromDB = (event, context, callback) => {
+        let seasonX = '2018-19';
+        
+        if (event.pathParameters !== null && event.pathParameters !== undefined) {
+                seasonX = event.pathParameters.season
+        };
+        
+        getLeaguesList(seasonX)
+            .then(result => {
+                const response = { body: JSON.stringify(result) };
+                callback(null, response);
+            })
+            .catch(callback);
+    };    
+
 
     const getLeaguesFromDGI = (event, context, callback) => {
         let leaguesList
@@ -164,7 +185,7 @@
     };
 
     module.exports = {
-        
+        getLeaguesFromDB,
         getLeaguesFromDGI,
         getgames,
         getstats,
