@@ -115,7 +115,7 @@
         
         // let idx = '-forening-2154900-hold-165377'
         // let idx = '-forening-2148000-hold-152096'
-        let idx = '-forening-2148000-hold-152407'
+        let idx = '-turnering-32794/raekke-90466-pulje-33639'
         if (event.pathParameters !== null && event.pathParameters !== undefined) {
             
                 idx = event.pathParameters.id

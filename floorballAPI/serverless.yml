@@ -23,6 +23,13 @@
           Resource: "arn:aws:dynamodb:*:*:table/*"
               
     functions:
+      updateGames:
+        handler: handler.updateGames
+        events:
+          - http:
+              path: updateGames
+              method: post
+              cors: true 
       getLeaguesFromDB:
         handler: handler.getLeaguesFromDB
         events:
@@ -85,12 +92,12 @@
             AttributeDefinitions:
               - AttributeName: leagueId
                 AttributeType: S
-              - AttributeName: gamesData
+              - AttributeName: leagueName
                 AttributeType: S  
             KeySchema:
               - AttributeName: leagueId
                 KeyType: HASH
-              - AttributeName: gamesData
+              - AttributeName: leagueName
                 KeyType: RANGE
             ProvisionedThroughput:
               ReadCapacityUnits: 5

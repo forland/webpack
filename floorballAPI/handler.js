@@ -8,6 +8,9 @@
     const { extractLeaguesFromHTML } = require('./handlers/getLeaguesFromDGI');
     const { saveLeaguesInDB } = require('./handlers/saveLeaguesInDB');
     const { getLeaguesList } = require('./handlers/getLeaguesListFromDB');
+   
+    // Update Games
+    const { updateLeagueGames } = require('./handlers/updateGames');
     
     // Old stuff    
     const { extractGamesFromHTML } = require('./handlers/games');
@@ -17,6 +20,27 @@
     const { saveNewPlayedGamesInDB } = require('./handlers/saveNewPlayedGamesInDB');
     const { sendEmail } = require('./handlers/sendEmail');
 
+
+    const updateGames = (event, context, callback) => {
+        let seasonX = '2019-19';
+        
+        if (event.pathParameters !== null && event.pathParameters !== undefined) {
+                seasonX = event.pathParameters.season
+        };
+        
+        getLeaguesList(seasonX)
+            .then(result => {
+            
+            return updateLeagueGames(result);   
+                
+            })
+            .then(result => {
+                // console.log(result)
+                const response = { body: JSON.stringify('Done') };
+                callback(null, response);
+            })
+            .catch(callback);
+    };    
 
     const getLeaguesFromDB = (event, context, callback) => {
         let seasonX = '2018-19';
@@ -185,6 +209,7 @@
     };
 
     module.exports = {
+        updateGames,
         getLeaguesFromDB,
         getLeaguesFromDGI,
         getgames,

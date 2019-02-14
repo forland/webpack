@@ -3,17 +3,14 @@ const moment = require('moment');
 const request = require('axios');
 
 
-function extractGamesFromHTML (html) {
+function extractGamesFromHTML (html, leagueListItem) {
  
   const $ = cheerio.load(html)
-  const koen = $('#Views_Forening_Hold_Info').find($('.footable tbody')).children().eq(1).children().eq(1).text().trim();
-  const raekkePulje = $('#Views_Forening_Hold_Info').find($('.footable tbody')).children().eq(2).children().eq(1).text().trim();
-  let raekke = raekkePulje.slice(0,(raekkePulje.indexOf('\n',0)));
-  if (raekke == 'Zone grundspil - Øst') {
-    raekke = 'Grundspil - Damer' 
-  };
-  const pulje = raekkePulje.slice(raekkePulje.lastIndexOf('\n'),raekkePulje.length).trim();
-  const puljeUrl = $('#Views_Forening_Hold_Info').find($('.footable tbody')).children().eq(2).children().eq(1).children().eq(1).attr('href');
+  const leagueCategory = leagueListItem.leagueCategory;
+  const leagueName = leagueListItem.leagueName;
+  const leagueRegion = leagueListItem.leagueRegion;
+  const leagueUrl = leagueListItem.leagueId;
+  
   const tableRowsGames = $('#Views_Turnering_Raekke_Pulje_Program').find($('.footable tbody tr'));
 
   const games = [];
@@ -34,6 +31,8 @@ function extractGamesFromHTML (html) {
     let gameLocation = $(el).children().eq(3).children().eq(1).text().trim();
     let gameLocationUrl = $(el).children().eq(3).children().eq(1).attr('href');
     let gameResult = $(el).children().eq(4).text().trim();
+      // set gameResult to null if blank - to fit into dynamoDB
+      if (gameResult === '')  {gameResult = null};
     
     moment.locale('da');
     
@@ -42,11 +41,11 @@ function extractGamesFromHTML (html) {
     
     let gameDateTxt = moment(dateAndTime, 'DD-MM-YYYY').format('LL');;
 
-    games.push({raekke, pulje, puljeUrl, koen, gameNumber, gameNumberUrl, gameDate, gameTime, gameDateTxt, homeTeam, homeTeamUrl, awayTeam, awayTeamUrl, gameLocation, gameLocationUrl, gameResult,});
+    games.push({leagueName, leagueRegion, leagueCategory, leagueUrl, gameNumber, gameNumberUrl, gameDate, gameTime, gameDateTxt, homeTeam, homeTeamUrl, awayTeam, awayTeamUrl, gameLocation, gameLocationUrl, gameResult,});
 
     
   });
-  console.log ("Array with new games created")
+  console.log('CREATED Array with ' + games.length + ' games for >' + leagueListItem.leagueName + '< Id: ' + leagueListItem.leagueId)
   return games;
 }
 
