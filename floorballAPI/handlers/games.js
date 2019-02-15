@@ -31,8 +31,8 @@ function extractGamesFromHTML (html, leagueListItem) {
     let gameLocation = $(el).children().eq(3).children().eq(1).text().trim();
     let gameLocationUrl = $(el).children().eq(3).children().eq(1).attr('href');
     let gameResult = $(el).children().eq(4).text().trim();
-      // set gameResult to null if blank - to fit into dynamoDB
-      if (gameResult === '')  {gameResult = null};
+      // set gameResult to 'Z' if blank - to fit into dynamoDB
+      if (gameResult === '')  {gameResult = 'Z'};
     
     moment.locale('da');
     
@@ -45,7 +45,7 @@ function extractGamesFromHTML (html, leagueListItem) {
 
     
   });
-  console.log('CREATED Array with ' + games.length + ' games for >' + leagueListItem.leagueName + '< Id: ' + leagueListItem.leagueId)
+  console.log('CREATED Array with ' + games.length + ' games from HTML for >' + leagueListItem.leagueName + '< Id: ' + leagueListItem.leagueId)
   return games;
 }
 

@@ -22,7 +22,7 @@
 
 
     const updateGames = (event, context, callback) => {
-        let seasonX = '2019-19';
+        let seasonX = '2018-19';
         
         if (event.pathParameters !== null && event.pathParameters !== undefined) {
                 seasonX = event.pathParameters.season
@@ -36,7 +36,7 @@
             })
             .then(result => {
                 // console.log(result)
-                const response = { body: JSON.stringify('Done') };
+                const response = { body: JSON.stringify('Update of leagueGames Table done') };
                 callback(null, response);
             })
             .catch(callback);

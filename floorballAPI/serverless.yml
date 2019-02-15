@@ -102,6 +102,23 @@
             ProvisionedThroughput:
               ReadCapacityUnits: 5
               WriteCapacityUnits: 5
+        NewLeagueGames:
+          Type: AWS::DynamoDB::Table
+          Properties:
+            TableName: newLeagueGames
+            AttributeDefinitions:
+              - AttributeName: leagueId
+                AttributeType: S
+              - AttributeName: gameId
+                AttributeType: S  
+            KeySchema:
+              - AttributeName: leagueId
+                KeyType: HASH
+              - AttributeName: gameId
+                KeyType: RANGE
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5              
         SignedUpLeagues:
           Type: AWS::DynamoDB::Table
           Properties:
