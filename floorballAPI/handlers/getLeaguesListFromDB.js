@@ -16,8 +16,8 @@ function getLeaguesList(seasonX) {
     return leaguesList.then(
       function(data) {
         // console.log(data);
-              console.log('RETRIEVED leagues for season: ' + seasonY);
               let leagueListFiltered = data.Items.filter(seasonList => seasonList.season === seasonY);
+              console.log('RETRIEVED ' + leagueListFiltered.length + ' league(s) for season: ' + seasonY);
               return leagueListFiltered
       }).catch(
         function(err) {

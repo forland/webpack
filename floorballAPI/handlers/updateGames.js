@@ -15,7 +15,6 @@ const request = require('axios');
 const { extractGamesFromHTML } = require('./games');
 
 
-
 function getHTML(leagueListItem) {
     return new Promise(resolve => {
         let url ='https://minidraet.dgi.dk' + leagueListItem.leagueId;
@@ -37,8 +36,11 @@ function updateNextGameDate(gamesList, leagueListItem) {
       let gamesListNotPlayed = gamesList.filter(played => played.gameResult === 'Z')
       
       if (gamesListNotPlayed.length > 0) {
-          nextGameDate = gamesListNotPlayed[0].gameDate
-        
+        let gamesListNotPlayedTooOld = gamesListNotPlayed.filter(playedSoon => moment.duration(moment(playedSoon.gameDate).diff(moment(Date.now()).toISOString())).asDays() > (-8))
+
+          if (gamesListNotPlayedTooOld.length > 0) {
+            nextGameDate = gamesListNotPlayedTooOld[0].gameDate
+          }
       }
       
                   var params = {  TableName: 'leagues',
@@ -108,8 +110,6 @@ function getLeagueGames(leagueListItem) {
         function(err) {
         console.error('error retrieving games to DB for >' + leagueListItem.leagueName + '< leagueId: ' + leagueListItem.leagueId, err, err.stack);
       });
-      
-
 }
 
 function saveNewGamesPlayed (leagueGamesList, updatedGamesList, leagueListItem) {

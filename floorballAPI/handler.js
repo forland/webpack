@@ -3,6 +3,9 @@
 
     const { differenceWith, isEqual } = require('lodash');
     const request = require('axios');
+    
+    // Dates
+    const moment = require('moment');
 
     // Leagues
     const { extractLeaguesFromHTML } = require('./handlers/getLeaguesFromDGI');
@@ -23,15 +26,36 @@
 
     const updateGames = (event, context, callback) => {
         let seasonX = '2018-19';
+        let leaguesReqToUpdate = 'ACTIVE'
+        let leaguesToUpdate = []
         
         if (event.pathParameters !== null && event.pathParameters !== undefined) {
                 seasonX = event.pathParameters.season
         };
         
         getLeaguesList(seasonX)
-            .then(result => {
-            
-            return updateLeagueGames(result);   
+            .then(leaguesList => {
+                if (leaguesReqToUpdate === 'ACTIVE') {
+                    // only the not finished leagues
+                    let leagueListActiveFiltered = leaguesList.filter(leagueActive => leagueActive.nextGameDate !== 'Z');
+                    console.log('FILTERED ' + leagueListActiveFiltered.length + ' active league(s) for season: ' + seasonX);
+                    
+                    // Only the ones recently played
+                    let leguesListActivePlayDate = leagueListActiveFiltered.filter(leagueActivePlayDate => leagueActivePlayDate.nextGameDate < moment(Date.now()).toISOString());
+                    console.log('FILTERED ' + leguesListActivePlayDate.length + ' playdate-surpassed league(s) for season: ' + seasonX);
+                    
+                    if (leguesListActivePlayDate.length > 0) {
+                        return updateLeagueGames(leguesListActivePlayDate);
+                    }
+                    else {
+                        const response = { body: JSON.stringify('No active surpassed leagues to update for season ' + seasonX) };
+                        callback(null, response);
+                    }
+                }
+                else {
+                    const response = { body: JSON.stringify('No leagues to update for season ' + seasonX) };
+                    callback(null, response);
+                }
                 
             })
             .then(result => {
