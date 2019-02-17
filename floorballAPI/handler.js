@@ -10,10 +10,21 @@
     // Leagues
     const { extractLeaguesFromHTML } = require('./handlers/getLeaguesFromDGI');
     const { saveLeaguesInDB } = require('./handlers/saveLeaguesInDB');
-    const { getLeaguesList } = require('./handlers/getLeaguesListFromDB');
+    const { getLeaguesList } = require('./handlers/getLeagues');
+   
+    // get new played Games
+    const { getNewGamesPlayedList } = require('./handlers/getNewGamesPlayed');
+    
+        // get signedLeagues
+    const { getSignedLeaguesByEmail } = require('./handlers/getSignedLeaguesByEmail');
+    const { getSignedLeagues } = require('./handlers/getSignedLeagues');
    
     // Update Games
     const { updateLeagueGames } = require('./handlers/updateGames');
+    
+    // Update/send email
+    const updateEmail = require('./handlers/updateEmail');
+    const { sendEmailSigned } = require('./handlers/sendEmailSigned');
     
     // Old stuff    
     const { extractGamesFromHTML } = require('./handlers/games');
@@ -23,57 +34,95 @@
     const { saveNewPlayedGamesInDB } = require('./handlers/saveNewPlayedGamesInDB');
     const { sendEmail } = require('./handlers/sendEmail');
 
+    const updateEmailLeagues = (event, context, callback) => {
+        
+        let data = {    "emailAddress": "frankforland@gmail.com",
+                        "signedLeagues": [  { "leagueId": "/turnering/32794/raekke/90462/pulje/33635", "leagueName": "Unihoc Floorball Liga - Landsdækkende" },
+                                            { "leagueId": "/turnering/32794/raekke/90465/pulje/33641", "leagueName": "2. Division - Herrer - Vest - Nord" }]
+                            
+                        };
+        
+        if (event.body !== null && event.body !== undefined) {           
+            data = JSON.parse(event.body);
+        }
+        
+        updateEmail(data)
+            .then(result => {
+                const response = { body: JSON.stringify(result) };
+                callback(null, response);
+            })
+            .catch(callback);
+    };
+
 
     const updateGames = (event, context, callback) => {
-        let seasonX = '2018-19';
-        let leaguesReqToUpdate = 'ACTIVE'
-        let leaguesToUpdate = []
+
+        let data = {    "season": "2018/19",
+                        "leaguesReqToUpdate": "ACTIVE",
+                        //"leaguesToUpdate": [    { "leagueId": "/turnering/32794/raekke/90462/pulje/33635", "leagueName": "Unihoc Floorball Liga - Landsdækkende" },
+                        //                        { "leagueId": "/turnering/32794/raekke/90465/pulje/33641", "leagueName": "2. Division - Herrer - Vest - Nord" }
+                       //                         ]
+                        };
         
-        if (event.pathParameters !== null && event.pathParameters !== undefined) {
-                seasonX = event.pathParameters.season
-        };
+        if (event.body !== null && event.body !== undefined) {           
+            data = JSON.parse(event.body);
+        }
         
-        getLeaguesList(seasonX)
+        getLeaguesList(data.season)
             .then(leaguesList => {
-                if (leaguesReqToUpdate === 'ACTIVE') {
-                    // only the not finished leagues
-                    let leagueListActiveFiltered = leaguesList.filter(leagueActive => leagueActive.nextGameDate !== 'Z');
-                    console.log('FILTERED ' + leagueListActiveFiltered.length + ' active league(s) for season: ' + seasonX);
-                    
-                    // Only the ones recently played
-                    let leguesListActivePlayDate = leagueListActiveFiltered.filter(leagueActivePlayDate => leagueActivePlayDate.nextGameDate < moment(Date.now()).toISOString());
-                    console.log('FILTERED ' + leguesListActivePlayDate.length + ' playdate-surpassed league(s) for season: ' + seasonX);
-                    
-                    if (leguesListActivePlayDate.length > 0) {
-                        return updateLeagueGames(leguesListActivePlayDate);
+                let leaguesToHandle = [];
+                
+                    if (data.leaguesReqToUpdate !== undefined && data.leaguesReqToUpdate === 'ACTIVE') {
+                        // only the not finished leagues
+                        let leagueListActiveFiltered = leaguesList.filter(leagueActive => leagueActive.nextGameDate !== 'Z');
+                        console.log('FILTERED ' + leagueListActiveFiltered.length + ' active league(s) for season: ' + data.season);
+                        
+                        // Only the ones recently played
+                        let leguesListActivePlayDate = leagueListActiveFiltered.filter(leagueActivePlayDate => leagueActivePlayDate.nextGameDate < moment(Date.now()).toISOString());
+                        console.log('FILTERED ' + leguesListActivePlayDate.length + ' playdate-surpassed league(s) for season: ' + data.season);
+                        
+                        leaguesList = leguesListActivePlayDate
+                        
                     }
-                    else {
-                        const response = { body: JSON.stringify('No active surpassed leagues to update for season ' + seasonX) };
-                        callback(null, response);
+                    if (data.leaguesToUpdate !== undefined && data.leaguesToUpdate.length > 0) {
+                        
+                        let leagueIDs = data.leaguesToUpdate.map(function (item) {return item.leagueId})
+                        leaguesList = leaguesList.filter(function(item) {
+                                                        return leagueIDs.indexOf(item.leagueId) !== -1;
+                                                    });  
+                        
+                        console.log('FILTERED ' + leaguesList.length + ' league(s) by request for season: ' + data.season);
+
                     }
+
+                
+                if (leaguesList.length > 0) {
+                        return updateLeagueGames(leaguesList);
                 }
                 else {
-                    const response = { body: JSON.stringify('No leagues to update for season ' + seasonX) };
+                    const response = { body: JSON.stringify('DONE: No leagues to update for season ' + data.season) };
                     callback(null, response);
                 }
                 
             })
-            .then(result => {
+            .then(() => {
                 // console.log(result)
-                const response = { body: JSON.stringify('Update of leagueGames Table done') };
+                const response = { body: JSON.stringify('DONE: Update of leagueGames Table for season ' + data.season + ' and handled signed emails') };
                 callback(null, response);
             })
             .catch(callback);
     };    
 
-    const getLeaguesFromDB = (event, context, callback) => {
-        let seasonX = '2018-19';
+    const getLeagues = (event, context, callback) => {
+        let season = '2018-19';
         
         if (event.pathParameters !== null && event.pathParameters !== undefined) {
-                seasonX = event.pathParameters.season
+                season = event.pathParameters.season
         };
         
-        getLeaguesList(seasonX)
+        season = season.replace(/-/g,'/');
+        
+        getLeaguesList(season)
             .then(result => {
                 const response = { body: JSON.stringify(result) };
                 callback(null, response);
@@ -82,20 +131,26 @@
     };    
 
 
-    const getLeaguesFromDGI = (event, context, callback) => {
-        let leaguesList
-        let idx = '-turnering-32794'
+    const updateLeagues = (event, context, callback) => {
         
-        if (event.pathParameters !== null && event.pathParameters !== undefined) {
-            
-                idx = event.pathParameters.id
+        let data = {    "tournamentId": "32794",
+                        "season": "2018/19"
+                        };
+        
+        
+        if (event.body !== null && event.body !== undefined) {           
+            data = JSON.parse(event.body);
         }
         
-        const url = 'https://minidraet.dgi.dk' + idx.replace(/-/g,'/');
+        let leaguesList = []
+        let season = data.season
+        let tournamentId = data.tournamentId
+        
+        const url = 'https://minidraet.dgi.dk/turnering/' + tournamentId;
         
         request(url)
             .then(({data}) => {
-                return leaguesList = extractLeaguesFromHTML(data);
+                return leaguesList = extractLeaguesFromHTML(data, season);
             })
             .then((leaguesList) => {
                 console.log('Leagues found: ' + leaguesList.length)
@@ -118,7 +173,43 @@
             .catch(callback);
     };
  
-
+     const sendSignedEmails = (event, context, callback) => {
+        
+        getNewGamesPlayedList(undefined)
+            .then(newGamesPlayedList => {
+                if (newGamesPlayedList.length > 0) {
+                    console.log(newGamesPlayedList.length)
+                    return sendEmailSigned(newGamesPlayedList);
+                }
+                else {
+                    const response = { body: JSON.stringify('DONE: no emails to send ') };
+                    callback(null, response);
+                }
+                    
+            })
+            .then(result => {
+                const response = { body: JSON.stringify(result) };
+                callback(null, response);
+            })
+            .catch(callback);
+    };    
+    
+     const getSignedLeaguesByEmailAddress = (event, context, callback) => {
+        let data = {    "emailAddress": "frankforland@gmail.com"
+                        };
+        
+        if (event.body !== null && event.body !== undefined) {           
+            data = JSON.parse(event.body);
+        }
+        
+        getSignedLeaguesByEmail(data.emailAddress)
+            .then(result => {
+                const response = { body: JSON.stringify(result) };
+                callback(null, response);
+            })
+            .catch(callback);
+    };   
+    
     const getgameinfo = (event, context, callback) => {
 
         let idx = '-turnering-32794-raekke-90490-pulje-33669-kamp-681145'
@@ -233,9 +324,12 @@
     };
 
     module.exports = {
+        updateEmailLeagues,
         updateGames,
-        getLeaguesFromDB,
-        getLeaguesFromDGI,
+        getLeagues,
+        updateLeagues,
+        sendSignedEmails,
+        getSignedLeaguesByEmailAddress,
         getgames,
         getstats,
         getgameinfo,

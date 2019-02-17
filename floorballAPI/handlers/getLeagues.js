@@ -6,9 +6,7 @@ AWS.config.update({region: 'eu-west-1'});
 
 // Create the promise and SES service object
 
-function getLeaguesList(seasonX) {
-
-    const seasonY = seasonX.replace(/-/g,'/');
+function getLeaguesList(season) {
     
     var leaguesList = new AWS.DynamoDB.DocumentClient().scan({ TableName: 'leagues' }).promise();
     
@@ -16,8 +14,8 @@ function getLeaguesList(seasonX) {
     return leaguesList.then(
       function(data) {
         // console.log(data);
-              let leagueListFiltered = data.Items.filter(seasonList => seasonList.season === seasonY);
-              console.log('RETRIEVED ' + leagueListFiltered.length + ' league(s) for season: ' + seasonY);
+              let leagueListFiltered = data.Items.filter(seasonList => seasonList.season === season);
+              console.log('RETRIEVED ' + leagueListFiltered.length + ' league(s) for season: ' + season);
               return leagueListFiltered
       }).catch(
         function(err) {

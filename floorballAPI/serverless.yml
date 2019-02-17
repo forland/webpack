@@ -23,6 +23,13 @@
           Resource: "arn:aws:dynamodb:*:*:table/*"
               
     functions:
+      updateEmailLeagues:
+        handler: handler.updateEmailLeagues
+        events:
+          - http:
+              path: updateEmailLeagues
+              method: post
+              cors: true 
       updateGames:
         handler: handler.updateGames
         events:
@@ -30,20 +37,34 @@
               path: updateGames
               method: post
               cors: true 
-      getLeaguesFromDB:
-        handler: handler.getLeaguesFromDB
+      getLeagues:
+        handler: handler.getLeagues
         events:
           - http:
-              path: getLeaguesFromDB/{season}
+              path: getLeagues/{season}
               method: get
               cors: true 
-      getleaguesFromDGI:
-        handler: handler.getLeaguesFromDGI
+      updateLeagues:
+        handler: handler.updateLeagues
         events:
           - http:
-              path: getleaguesFromDGI/{id}
-              method: get
+              path: updateLeagues
+              method: post
               cors: true  
+      getSignedLeaguesByEmailAddress:
+        handler: handler.getSignedLeaguesByEmailAddress
+        events:
+          - http:
+              path: getSignedLeaguesByEmailAddress
+              method: post
+              cors: true       
+      sendSignedEmails:
+        handler: handler.sendSignedEmails
+        events:
+          - http:
+              path: sendSignedEmails
+              method: get
+              cors: true
       getgames:
         handler: handler.getgames
         events:
@@ -122,17 +143,13 @@
         SignedUpLeagues:
           Type: AWS::DynamoDB::Table
           Properties:
-            TableName: sigedUpLeagues
+            TableName: signedUpLeagues
             AttributeDefinitions:
               - AttributeName: emailAddress
                 AttributeType: S
-              - AttributeName: signedLeagues
-                AttributeType: S  
             KeySchema:
               - AttributeName: emailAddress
                 KeyType: HASH
-              - AttributeName: signedLeagues
-                KeyType: RANGE
             ProvisionedThroughput:
               ReadCapacityUnits: 5
               WriteCapacityUnits: 5

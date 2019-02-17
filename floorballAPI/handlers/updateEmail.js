@@ -1,17 +1,16 @@
     'use strict';
 
+    const moment = require('moment');
     const AWS = require('aws-sdk');
     const dynamoDb = new AWS.DynamoDB.DocumentClient();
-    const uuid = require('uuid');
 
     module.exports = (data) => {
         const params = {
-            TableName: 'products',
+            TableName: 'signedUpLeagues',
             Item: {
-                name: data.name,
-                quantity: data.quantity,
-                id: uuid.v1(),
-                addedAt: Date.now(),
+                emailAddress: data.emailAddress,
+                signedLeagues: data.signedLeagues,
+                addedAt: moment(Date.now()).toISOString(),
             }
         };
         return dynamoDb.put(params).promise()

@@ -1,10 +1,13 @@
   // Load the AWS SDK for Node.js
 var AWS = require('aws-sdk');
+
 // Set the region 
 AWS.config.update({region: 'eu-west-1'});
+
+// Dates
+const moment = require('moment');    
     
 // Create the promise and SES service object
-
 function saveLeaguesInDB (leaguesList) {
 
 
@@ -18,6 +21,8 @@ function saveLeaguesInDB (leaguesList) {
                                 leagueCategory: leaguesList[i].leagueCategory,
                                 leagueRegion: leaguesList[i].leagueRegion,
                                 season: leaguesList[i].season,
+                                // updated with d.d. to make sure new leagues are handled and rehandling of all leagues when called
+                                nextGameDate: moment(Date.now()).toISOString(),
                                 
                                 }
         	  }
