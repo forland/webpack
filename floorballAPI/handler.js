@@ -17,7 +17,7 @@
     
         // get signedLeagues
     const { getSignedLeaguesByEmail } = require('./handlers/getSignedLeaguesByEmail');
-    const { getSignedLeagues } = require('./handlers/getSignedLeagues');
+    const { getSignedLeaguesList } = require('./handlers/getSignedLeagues');
    
     // Update Games
     const { updateLeagueGames } = require('./handlers/updateGames');
@@ -178,8 +178,11 @@
         getNewGamesPlayedList(undefined)
             .then(newGamesPlayedList => {
                 if (newGamesPlayedList.length > 0) {
-                    console.log(newGamesPlayedList.length)
-                    return sendEmailSigned(newGamesPlayedList);
+                    return getSignedLeaguesList()
+                        .then(signedUpList => {
+                            // console.log(signedUpList)
+                            return sendEmailSigned(newGamesPlayedList, signedUpList)
+                    });
                 }
                 else {
                     const response = { body: JSON.stringify('DONE: no emails to send ') };
@@ -188,7 +191,7 @@
                     
             })
             .then(result => {
-                const response = { body: JSON.stringify(result) };
+                const response = { body: JSON.stringify('DONE: emails send ') };
                 callback(null, response);
             })
             .catch(callback);

@@ -14,8 +14,8 @@ function getSignedLeaguesList() {
     return signedLeaguesList.then(
       function(data) {
         // console.log(data);
-              console.log('RETRIEVED ' + data.length + ' signedUpleague(s)');
-              return data
+              console.log('RETRIEVED ' + data.Items.length + ' signedUpleague(s)');
+              return data.Items
       }).catch(
         function(err) {
         console.error("Error getting signedUpLeagues from DB", err, err.stack);
