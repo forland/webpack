@@ -2,6 +2,9 @@
 const AWS = require('aws-sdk');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
+// flatMap
+var flatMap = require('array.prototype.flatmap');
+
 // Dates
 const moment = require('moment');
     
@@ -123,14 +126,14 @@ function sendEmailSigned (newGamesPlayedList, signedUpLeaguesList) {
    // console.log(signedUpLeaguesList)
    
     // Filter only relevant emails
-    let newGamesPlayedListID = newGamesPlayedList.map(function (item) {return item.leagueId})
+    let newGamesPlayedListID = newGamesPlayedList.map(function(item) {return item.leagueId})
     const signedUpLeaguesListFiltered = signedUpLeaguesList.filter(leagueSigned => leagueSigned.signedLeagues.find(legauesPlayed => newGamesPlayedListID.includes(legauesPlayed.leagueId)));
     console.log('signedLeagues filtered: ' + signedUpLeaguesListFiltered.length)
     
     // Filter only relevant newGames  
-    let signedUpLeaguesListID = signedUpLeaguesList.flatMap(function (item) {return item.signedLeagues}).map(function (itemX) {return itemX.leagueId})  
+    let signedUpLeaguesListID = flatMap(signedUpLeaguesList, function(item) {return item.signedLeagues}).map(function (itemX) {return itemX.leagueId});
     const newGamesPlayedListFiltered = newGamesPlayedList.filter(function(item) {return signedUpLeaguesListID.indexOf(item.leagueId) !== -1;}); 
-    console.log('newgames filtered: ' + newGamesPlayedListFiltered.length) 
+    console.log('newgames filtered: ' + newGamesPlayedListFiltered.length);
     
     // do an array for each emailaddress
     const emailsData = [];
@@ -151,7 +154,7 @@ function sendEmailSigned (newGamesPlayedList, signedUpLeaguesList) {
                           }
                   }
       
-          gamesData = gamesData.flatMap(function (item) {return item.gamesList})
+          gamesData = flatMap(gamesData, function (item) {return item.gamesList})
           
           emailsData.push({emailAddress, gamesData});
       

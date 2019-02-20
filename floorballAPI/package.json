@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "array.prototype.flatmap": "^1.2.1",
     "aws-sdk": "^2.205.0",
     "cheerio": "^1.0.0-rc.2",
     "puppeteer": "^1.11.0",
