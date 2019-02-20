@@ -30,7 +30,7 @@ function updateNewGameState(newGamesPlayedItem) {
 }
 
 function updateNewGames(newGamesPlayedList){
-  console.log(newGamesPlayedList)
+  // console.log(newGamesPlayedList)
   
     let updateStateChain = Promise.resolve();
      for (let newGamesPlayedItem of newGamesPlayedList) {
@@ -170,11 +170,10 @@ function sendEmailSigned (newGamesPlayedList, signedUpLeaguesList) {
      for (let emailsDataItem of emailsData) {
          // sendEmailsChain = sendEmailsChain.then(() => updateNewGames(newGamesPlayedList))
          sendEmailsChain = sendEmailsChain.then(() => sendEmail(emailsDataItem))
-         .then(result => updateNewGames(newGamesPlayedList))
          .catch(error => console.log(error));
 
      }
-     return sendEmailsChain;
+     return sendEmailsChain.then(result => updateNewGames(newGamesPlayedList));
 }
 
 module.exports = {
