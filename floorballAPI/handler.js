@@ -18,9 +18,12 @@
         // get signedLeagues
     const { getSignedLeaguesByEmail } = require('./handlers/getSignedLeaguesByEmail');
     const { getSignedLeaguesList } = require('./handlers/getSignedLeagues');
+       
+    // Get Games
+    const { updateLeagueGames } = require('./handlers/updateGames');
    
     // Update Games
-    const { updateLeagueGames } = require('./handlers/updateGames');
+    const { getLeagueGamesList } = require('./handlers/getLeagueGames');
     
     // Update/send email
     const updateEmail = require('./handlers/updateEmail');
@@ -54,7 +57,34 @@
             .catch(callback);
     };
 
+    const getLeagueGames = (event, context, callback) => {
 
+        let data = {    "season": "2018/19",
+                        // "leaguesToGet": [   { "leagueId": "/turnering/32794/raekke/90462/pulje/33635", "leagueName": "Unihoc Floorball Liga - Landsdækkende" },
+                        //                     { "leagueId": "/turnering/32794/raekke/90465/pulje/33641", "leagueName": "2. Division - Herrer - Vest - Nord" }
+                        //                         ]
+                        };
+        
+        if (event.body !== null && event.body !== undefined) {           
+            data = JSON.parse(event.body);
+        }
+        
+        getLeagueGamesList(data.season, data.leaguesToGet)
+            .then(leagueGamesList => {
+                let response
+                
+                if (leagueGamesList.length > 0) {
+                    response = { body: JSON.stringify(leagueGamesList) };
+                }
+                else {
+                    response = { body: JSON.stringify('No leagues matched the request') };
+                }
+                
+                callback(null, response);
+            })
+            .catch(callback);
+    };  
+    
     const updateGames = (event, context, callback) => {
 
         let data = {    "season": "2018/19",
@@ -175,10 +205,19 @@
  
      const sendSignedEmails = (event, context, callback) => {
         
+        let extend = 'test';
+        
+        if (event.pathParameters !== null && event.pathParameters !== undefined) {
+                extend = event.pathParameters.extend
+        };
+        
+        console.log(event)
+        console.log(context)
+        
         getNewGamesPlayedList(undefined)
             .then(newGamesPlayedList => {
                 if (newGamesPlayedList.length > 0) {
-                    return getSignedLeaguesList()
+                    return getSignedLeaguesList(extend)
                         .then(signedUpList => {
                             // console.log(signedUpList)
                             return sendEmailSigned(newGamesPlayedList, signedUpList)
@@ -328,6 +367,7 @@
 
     module.exports = {
         updateEmailLeagues,
+        getLeagueGames,
         updateGames,
         getLeagues,
         updateLeagues,

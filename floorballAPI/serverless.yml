@@ -30,6 +30,13 @@
               path: updateEmailLeagues
               method: post
               cors: true 
+      getLeagueGames:
+        handler: handler.getLeagueGames
+        events:
+          - http:
+              path: getLeagueGames
+              method: post
+              cors: true               
       updateGames:
         handler: handler.updateGames
         events:
@@ -62,7 +69,7 @@
         handler: handler.sendSignedEmails
         events:
           - http:
-              path: sendSignedEmails
+              path: sendSignedEmails/{extend}
               method: get
               cors: true
       getgames:
