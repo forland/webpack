@@ -12,7 +12,7 @@ const { differenceWith, isEqual } = require('lodash');
 const request = require('axios');
 
 // extract from HTML
-const { extractGamesFromHTML } = require('./games');
+const { extractGamesFromHTML } = require('./getGamesFromDGI');
 
 
 function getHTML(leagueListItem) {
@@ -163,7 +163,7 @@ function updateLeagueGames (leaguesList) {
          .then(updatedGamesList => {
                       // Get gamesList form DB 
                       return getLeagueGames(leagueListItem)
-                      //.then(leagueGamesList => console.log(leagueGamesList))
+                      // .then(leagueGamesList => console.log(updatedGamesList))
                       .then(leagueGamesList => saveNewGamesPlayed(leagueGamesList, updatedGamesList, leagueListItem))
                       .then(result => saveGameData(updatedGamesList, leagueListItem))
                       .then(result => updateNextGameDate(updatedGamesList, leagueListItem))

@@ -72,13 +72,6 @@
               path: sendSignedEmails/{extend}
               method: get
               cors: true
-      getgames:
-        handler: handler.getgames
-        events:
-          - http:
-              path: games/{id}
-              method: get
-              cors: true
       getstats:
         handler: handler.getstats
         events:

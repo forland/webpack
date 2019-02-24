@@ -29,19 +29,16 @@
     const updateEmail = require('./handlers/updateEmail');
     const { sendEmailSigned } = require('./handlers/sendEmailSigned');
     
-    // Old stuff    
-    const { extractGamesFromHTML } = require('./handlers/games');
+    // Get more data   
     const { extractStatsFromHTML } = require('./handlers/stats');
     const { extractGameInfoFromHTML } = require('./handlers/gameinfo');
-    const { getOldPlayedGamesFromDB } = require('./handlers/getOldPlayedGamesFromDB');
-    const { saveNewPlayedGamesInDB } = require('./handlers/saveNewPlayedGamesInDB');
-    const { sendEmail } = require('./handlers/sendEmail');
 
     const updateEmailLeagues = (event, context, callback) => {
         
         let data = {    "emailAddress": "frankforland@gmail.com",
-                        "signedLeagues": [  { "leagueId": "/turnering/32794/raekke/90462/pulje/33635", "leagueName": "Unihoc Floorball Liga - Landsdækkende" },
-                                            { "leagueId": "/turnering/32794/raekke/90465/pulje/33641", "leagueName": "2. Division - Herrer - Vest - Nord" }]
+                        "signedLeagues": [  { "leagueId": "/turnering/32794/raekke/90467/pulje/33640", "leagueName": "Sjællandsserien - Øst" },
+                                            { "leagueId": "/turnering/32794/raekke/90465/pulje/33641", "leagueName": "2. Division - Herrer - Vest - Nord" },
+                                            { "leagueId": "/turnering/32794/raekke/90468/pulje/33645", "leagueName": "Serie 1 - Kreds 2" }]
                             
                         };
         
@@ -60,9 +57,9 @@
     const getLeagueGames = (event, context, callback) => {
 
         let data = {    "season": "2018/19",
-                        // "leaguesToGet": [   { "leagueId": "/turnering/32794/raekke/90462/pulje/33635", "leagueName": "Unihoc Floorball Liga - Landsdækkende" },
-                        //                     { "leagueId": "/turnering/32794/raekke/90465/pulje/33641", "leagueName": "2. Division - Herrer - Vest - Nord" }
-                        //                         ]
+                        "leaguesToGet": [   { "leagueId": "/turnering/32794/raekke/90462/pulje/33635", "leagueName": "Unihoc Floorball Liga - Landsdækkende" },
+                                            { "leagueId": "/turnering/32794/raekke/90465/pulje/33641", "leagueName": "2. Division - Herrer - Vest - Nord" }
+                                                ]
                         };
         
         if (event.body !== null && event.body !== undefined) {           
@@ -89,9 +86,9 @@
 
         let data = {    "season": "2018/19",
                         "leaguesReqToUpdate": "ACTIVE",
-                        //"leaguesToUpdate": [    { "leagueId": "/turnering/32794/raekke/90462/pulje/33635", "leagueName": "Unihoc Floorball Liga - Landsdækkende" },
-                        //                        { "leagueId": "/turnering/32794/raekke/90465/pulje/33641", "leagueName": "2. Division - Herrer - Vest - Nord" }
-                       //                         ]
+                        // "leaguesToUpdate": [    { "leagueId": "/turnering/32794/raekke/90462/pulje/33635", "leagueName": "Unihoc Floorball Liga - Landsdækkende" },
+                        //                         { "leagueId": "/turnering/32794/raekke/90465/pulje/33641", "leagueName": "2. Division - Herrer - Vest - Nord" }
+                        //                        ]
                         };
         
         if (event.body !== null && event.body !== undefined) {           
@@ -101,7 +98,7 @@
         getLeaguesList(data.season)
             .then(leaguesList => {
                 let leaguesToHandle = [];
-                
+                console.log(leaguesList)
                     if (data.leaguesReqToUpdate !== undefined && data.leaguesReqToUpdate === 'ACTIVE') {
                         // only the not finished leagues
                         let leagueListActiveFiltered = leaguesList.filter(leagueActive => leagueActive.nextGameDate !== 'Z');
@@ -137,7 +134,7 @@
             })
             .then(() => {
                 // console.log(result)
-                const response = { body: JSON.stringify('DONE: Update of leagueGames Table for season ' + data.season + ' and handled signed emails') };
+                const response = { body: JSON.stringify('DONE: Update of leagueGames Table for season ' + data.season) };
                 callback(null, response);
             })
             .catch(callback);
@@ -305,65 +302,6 @@
             .catch(callback);
     };
     
-    const getgames = (event, context, callback) => {
-        let gamesListNew, gamesListOld, gamesListNewPlayed, gamesListOldPlayed;
-        
-        // let idx = '-forening-2154900-hold-165377'
-        // let idx = '-forening-2148000-hold-152096'
-        let idx = '-forening-2148000-hold-152407'
-        if (event.pathParameters !== null && event.pathParameters !== undefined) {
-            
-                idx = event.pathParameters.id
-        }
-        
-        const forening = idx.slice(10, idx.indexOf("-hold-")); 
-        const hold = idx.slice(idx.lastIndexOf("-") + 1, idx.length);
-
-        const url = 'https://minidraet.dgi.dk' + idx.replace(/-/g,'/');
-        
-        request(url)
-            .then(({data}) => {
-                gamesListNew = extractGamesFromHTML(data);
-      
-            })
-            .then(function(result) {
-                // Get old list for this forening and hold from DB
-                return getOldPlayedGamesFromDB(forening, hold);
-                
-            }).then((gamesListOldPlayedPromiseResult) => {
-                gamesListOldPlayed = gamesListOldPlayedPromiseResult
-                
-                // save played games as list in DB
-                gamesListNewPlayed = gamesListNew.filter(played => played.gameResult !== '');
-                return saveNewPlayedGamesInDB(forening, hold, gamesListNewPlayed);  
-            })
-            .then(() => {
-                // send an email with new games dif to old if any
-                let difGamesPlayed = differenceWith(gamesListNewPlayed, gamesListOldPlayed, isEqual);
-                console.log("newGamesPlayed", difGamesPlayed);
-                console.log("newGames length", difGamesPlayed.length);
-               
-                 if (difGamesPlayed.length > 0) {
-                 return sendEmail(difGamesPlayed)
-                 }
-                 else return;
-            })
-            .then(() => {
-                // send respons og all new games to consumer
-                const response = {
-                                    statusCode: 200,
-                                    headers: {
-                                                'Access-Control-Allow-Origin': '*',
-                                                'Access-Control-Allow-Credentials': true,
-                                    },
-                                    body: JSON.stringify(gamesListNew)
-                                 };
-                
-                callback(null, response);
-            })
-                
-            .catch(callback);
-    };
 
     module.exports = {
         updateEmailLeagues,
@@ -373,8 +311,6 @@
         updateLeagues,
         sendSignedEmails,
         getSignedLeaguesByEmailAddress,
-        getgames,
         getstats,
-        getgameinfo,
-        sendEmail
+        getgameinfo
     };
