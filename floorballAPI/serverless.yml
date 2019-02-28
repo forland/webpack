@@ -72,6 +72,13 @@
               path: sendSignedEmails/{extend}
               method: get
               cors: true
+      deleteSignedEmail:
+        handler: handler.deleteSignedEmail
+        events:
+          - http:
+              path: deleteSignedEmail/{emailAddress}
+              method: get
+              cors: true
       getstats:
         handler: handler.getstats
         events:

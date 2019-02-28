@@ -3,10 +3,10 @@
     const AWS = require('aws-sdk');
     const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
-    module.exports = (id) => {
+    module.exports = (emailAddress) => {
         const params = {
-            TableName: 'products',
-            Key: { id }
+            TableName: 'signedUpLeagues',
+            Key: { emailAddress }
         };
         return dynamoDb.delete(params).promise();
     };

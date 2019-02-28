@@ -25,13 +25,37 @@
     // Update Games
     const { getLeagueGamesList } = require('./handlers/getLeagueGames');
     
-    // Update/send email
+    // Update/send/delete email
     const updateEmail = require('./handlers/updateEmail');
     const { sendEmailSigned } = require('./handlers/sendEmailSigned');
+    const unsubscribe = require('./handlers/deleteSignedEmail');
     
     // Get more data   
     const { extractStatsFromHTML } = require('./handlers/stats');
     const { extractGameInfoFromHTML } = require('./handlers/gameinfo');
+
+    
+    const deleteSignedEmail = (event, context, callback) => {
+    
+        let emailAddressEnc = 'frankforland%40gmail.com';
+        
+        
+        if (event.pathParameters !== null && event.pathParameters !== undefined) {
+                emailAddressEnc = event.pathParameters.emailAddress
+        };
+        
+        let emailAddressDec = decodeURIComponent(emailAddressEnc)
+        
+        console.log(emailAddressDec)
+        
+        unsubscribe(emailAddressDec)
+            .then(result => {
+                const response = { body: JSON.stringify({message: 'signedEmail ' + emailAddressDec + ' removed.'}) };
+                callback(null, response);
+            })
+            .catch(callback);
+    };
+
 
     const updateEmailLeagues = (event, context, callback) => {
         
@@ -55,7 +79,7 @@
     };
 
     const getLeagueGames = (event, context, callback) => {
-
+        
         let data = {    "season": "2018/19",
                         "leaguesToGet": [   { "leagueId": "/turnering/32794/raekke/90462/pulje/33635", "leagueName": "Unihoc Floorball Liga - Landsdækkende" },
                                             { "leagueId": "/turnering/32794/raekke/90465/pulje/33641", "leagueName": "2. Division - Herrer - Vest - Nord" }
@@ -83,6 +107,8 @@
     };  
     
     const updateGames = (event, context, callback) => {
+        console.log(event)
+        console.log(context)
 
         let data = {    "season": "2018/19",
                         "leaguesReqToUpdate": "ACTIVE",
@@ -95,10 +121,16 @@
             data = JSON.parse(event.body);
         }
         
+        if (event.detail !== null && event.detail !== undefined) {
+            if (event.source === 'aws.events') {    
+                data = event.detail;
+            }
+        }; 
+        
         getLeaguesList(data.season)
             .then(leaguesList => {
                 let leaguesToHandle = [];
-                console.log(leaguesList)
+                // console.log(leaguesList)
                     if (data.leaguesReqToUpdate !== undefined && data.leaguesReqToUpdate === 'ACTIVE') {
                         // only the not finished leagues
                         let leagueListActiveFiltered = leaguesList.filter(leagueActive => leagueActive.nextGameDate !== 'Z');
@@ -208,8 +240,13 @@
                 extend = event.pathParameters.extend
         };
         
-        console.log(event)
-        console.log(context)
+        if (event.source !== null && event.source !== undefined) {
+            if (event.source === 'aws.events') {    
+                extend = 'prod'
+            }
+        };   
+        
+        console.log('extend: ' + extend)
         
         getNewGamesPlayedList(undefined)
             .then(newGamesPlayedList => {
@@ -311,6 +348,7 @@
         updateLeagues,
         sendSignedEmails,
         getSignedLeaguesByEmailAddress,
+        deleteSignedEmail,
         getstats,
         getgameinfo
     };
