@@ -50,7 +50,14 @@
         
         unsubscribe(emailAddressDec)
             .then(result => {
-                const response = { body: JSON.stringify({message: 'signedEmail ' + emailAddressDec + ' removed.'}) };
+                const response = { 
+                                    statusCode: 200,
+                                    headers: {
+                                                'Access-Control-Allow-Origin': '*',
+                                                'Access-Control-Allow-Credentials': true,
+                                    },                
+                                    body: JSON.stringify({message: 'signedEmail ' + emailAddressDec + ' removed.'})
+                };
                 callback(null, response);
             })
             .catch(callback);
@@ -72,7 +79,14 @@
         
         updateEmail(data)
             .then(result => {
-                const response = { body: JSON.stringify(result) };
+                const response = { 
+                                    statusCode: 200,
+                                    headers: {
+                                                'Access-Control-Allow-Origin': '*',
+                                                'Access-Control-Allow-Credentials': true,
+                                    },
+                                    body: JSON.stringify(result) 
+                };
                 callback(null, response);
             })
             .catch(callback);
@@ -98,7 +112,14 @@
                     response = { body: JSON.stringify(leagueGamesList) };
                 }
                 else {
-                    response = { body: JSON.stringify('No leagues matched the request') };
+                    response = { 
+                                    statusCode: 200,
+                                    headers: {
+                                                'Access-Control-Allow-Origin': '*',
+                                                'Access-Control-Allow-Credentials': true,
+                                    },                        
+                                    body: JSON.stringify('No leagues matched the request')
+                    };
                 }
                 
                 callback(null, response);
@@ -159,14 +180,28 @@
                         return updateLeagueGames(leaguesList);
                 }
                 else {
-                    const response = { body: JSON.stringify('DONE: No leagues to update for season ' + data.season) };
+                    const response = { 
+                                    statusCode: 200,
+                                    headers: {
+                                                'Access-Control-Allow-Origin': '*',
+                                                'Access-Control-Allow-Credentials': true,
+                                    },                        
+                                    body: JSON.stringify('DONE: No leagues to update for season ' + data.season)
+                    };
                     callback(null, response);
                 }
                 
             })
             .then(() => {
                 // console.log(result)
-                const response = { body: JSON.stringify('DONE: Update of leagueGames Table for season ' + data.season) };
+                const response = { 
+                                    statusCode: 200,
+                                    headers: {
+                                                'Access-Control-Allow-Origin': '*',
+                                                'Access-Control-Allow-Credentials': true,
+                                    },                    
+                                    body: JSON.stringify('DONE: Update of leagueGames Table for season ' + data.season)
+                };
                 callback(null, response);
             })
             .catch(callback);
@@ -183,7 +218,14 @@
         
         getLeaguesList(season)
             .then(result => {
-                const response = { body: JSON.stringify(result) };
+                const response = { 
+                                    statusCode: 200,
+                                    headers: {
+                                                'Access-Control-Allow-Origin': '*',
+                                                'Access-Control-Allow-Credentials': true,
+                                    },                    
+                                    body: JSON.stringify(result) 
+                };
                 callback(null, response);
             })
             .catch(callback);
@@ -280,7 +322,14 @@
         
         getSignedLeaguesByEmail(data.emailAddress)
             .then(result => {
-                const response = { body: JSON.stringify(result) };
+                const response = { 
+                                    statusCode: 200,
+                                    headers: {
+                                                'Access-Control-Allow-Origin': '*',
+                                                'Access-Control-Allow-Credentials': true,
+                                    },                    
+                                    body: JSON.stringify(result) 
+                };
                 callback(null, response);
             })
             .catch(callback);
