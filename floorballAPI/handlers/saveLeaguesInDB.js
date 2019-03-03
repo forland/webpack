@@ -23,6 +23,7 @@ function saveLeaguesInDB (leaguesList) {
                                 season: leaguesList[i].season,
                                 // updated with d.d. to make sure new leagues are handled and rehandling of all leagues when called
                                 nextGameDate: moment(Date.now()).toISOString(),
+                                teams: leaguesList[i].teams, 
                                 
                                 }
         	  }
@@ -31,7 +32,7 @@ function saveLeaguesInDB (leaguesList) {
         	promises.push(promise);
         }
 
-return Promise.all(promises).then();
+return Promise.all(promises).then(console.log('Updated leagues table'));
 
 }
 

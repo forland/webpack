@@ -15,9 +15,7 @@ function extractLeaguesFromHTML (html, season) {
 
   let headerTXT = null
 
-  
   const leagues = [];
-  
   
   tableRowLeagues.each((i, el) => {
     if ($(el).is('thead')) { // if tableheader then save leagueName first part for later hit on tablebody
@@ -36,11 +34,19 @@ function extractLeaguesFromHTML (html, season) {
           leagueCategory = 'Damer'
         }
       let leagueRegion = $(el).children().eq(0).children().eq(0).find('a').text().trim();
-      
-      leagues.push({leagueId, leagueName, leagueCategory, leagueRegion, season})
-      
+     
+      let teamsList = $(el).children().eq(0).children().eq(1).find('a');
+
+      const teams = []
+          teamsList.each((i, el) => {
+              let teamId = $(el).attr('href')
+              let teamName = $(el).text().trim()
+          
+            teams.push ({teamId, teamName})
+          })
+
+      leagues.push({leagueId, leagueName, leagueCategory, leagueRegion, season, teams})
     }
-    
   });
   // console.log(leagues);
   return leagues;

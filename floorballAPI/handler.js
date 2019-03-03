@@ -255,6 +255,8 @@
             })
             .then((leaguesList) => {
                 console.log('Leagues found: ' + leaguesList.length)
+                // leaguesList = leaguesList[0]
+                // console.log(leaguesList)
                 return saveLeaguesInDB(leaguesList); 
                 
             })   
