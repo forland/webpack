@@ -42,7 +42,7 @@ function extractLeaguesFromHTML (html, season) {
               let teamId = $(el).attr('href')
               let teamName = $(el).text().trim()
           
-            teams.push ({teamId, teamName})
+            teams.push ({teamId, teamName, leagueId, leagueName, leagueCategory, leagueRegion})
           })
 
       leagues.push({leagueId, leagueName, leagueCategory, leagueRegion, season, teams})
